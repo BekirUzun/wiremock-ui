@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Trash2, PlusCircle } from 'react-feather'
 import { FieldArray, FormikErrors, FormikTouched, getIn } from 'formik'
-import { Button, Input } from 'edikit'
+import { Button, Input, Textarea } from 'edikit'
 import { IMappingFormValues } from '../../types'
 
 interface IResponseBaseProps {
@@ -114,6 +114,35 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                                     )}
                                 </React.Fragment>
                             ))}
+                            <label
+                                htmlFor="responseBody"
+                                style={{
+                                    gridColumnStart: 1,
+                                    gridColumnEnd: 9,
+                                    marginTop: '6px'
+                                }}
+                            >
+                                Body
+                            </label>
+                            <Textarea
+                                id="responseBody"
+                                name="responseBody"
+                                value={values.responseBody || ''}
+                                onChange={onChange}
+                                onBlur={onBlur}
+                                placeholder="Response body"
+                                style={{
+                                    gridColumnStart: 1,
+                                    gridColumnEnd: 9,
+                                    minHeight: '120px',
+                                    resize: 'vertical'
+                                }}
+                            />
+                            {errors.responseBody && touched.responseBody && (
+                                <div style={{ color: 'red', gridColumnStart: 1, gridColumnEnd: 9 }}>
+                                    {errors.responseBody}
+                                </div>
+                            )}
                         </React.Fragment>
                     )
                 }}

@@ -23,8 +23,39 @@ class Explorer extends React.Component<IExplorerProps, IExplorerState> {
     constructor(props: IExplorerProps) {
         super(props)
 
+        // By default open root, the first server (if any) and its mappings node (if any)
+        const openedIds: string[] = ['root']
+        const { tree } = props
+
+        if (tree && tree.children && tree.children.length > 0) {
+            const firstServer = tree.children[0]
+            if (firstServer && firstServer.id) {
+                openedIds.push(firstServer.id)
+
+                const mappingsNode = firstServer.children && firstServer.children.find(c => c.type === 'mappings')
+                if (mappingsNode && mappingsNode.id) {
+                    openedIds.push(mappingsNode.id)
+                }
+            }
+        }
+
         this.state = {
-            openedIds: ['root'],
+            openedIds,
+        }
+    }
+    
+    componentDidMount() {
+        const { tree, servers, loadServerMappings } = this.props
+
+        if (tree && tree.children && tree.children.length > 0) {
+            const firstServerNode = tree.children[0]
+            const mappingsNode = firstServerNode.children && firstServerNode.children.find(c => c.type === 'mappings')
+            if (mappingsNode && firstServerNode.id) {
+                const server = servers.find(s => s.name === firstServerNode.id)
+                if (server) {
+                    loadServerMappings(server)
+                }
+            }
         }
     }
 

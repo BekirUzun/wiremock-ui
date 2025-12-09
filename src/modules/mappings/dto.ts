@@ -40,10 +40,12 @@ export const mappingRequestBodyPatternsToFormValue = (bodyPatterns?: IMappingReq
 
     bodyPatterns.forEach(bodyPattern => {
         mappingRequestBodyPatternMatchTypes.forEach(matchType => {
-            if (bodyPattern[matchType] !== undefined) {
+            const val: any = (bodyPattern as any)[matchType]
+            if (val !== undefined) {
+                const value = matchType === 'absent' ? '' : (typeof val === 'string' ? val : JSON.stringify(val, null, 2))
                 bodyPatternsFormValue.push({
                     matchType,
-                    value: matchType === 'absent' ? '' : bodyPattern[matchType]!
+                    value,
                 })
             }
         })
@@ -113,9 +115,23 @@ export const mappingRequestParamsFormValueToRequestParams = (params: IMappingReq
 }
 
 export const mappingRequestBodyPatternsFormValueToBodyPatterns = (bodyPatterns: IMappingRequestBodyPatternFormValue[]): IMappingRequestBodyPattern[] => {
-    return bodyPatterns.map((bodyPattern: IMappingRequestBodyPatternFormValue): IMappingRequestBodyPattern => ({
-        [bodyPattern.matchType]: bodyPattern.value,
-    }))
+    return bodyPatterns.map((bodyPattern: IMappingRequestBodyPatternFormValue): IMappingRequestBodyPattern => {
+        const raw = bodyPattern.value === undefined ? '' : String(bodyPattern.value).trim()
+        let parsed: any = raw
+        if (raw.length > 0 && (raw.charAt(0) === '{' || raw.charAt(0) === '[')) {
+            try {
+                parsed = JSON.parse(raw)
+            } catch (e) {
+                // keep as string if JSON parse fails
+                parsed = raw
+            }
+        }
+
+        // cast to any to allow object values when necessary
+        return ({
+            [bodyPattern.matchType]: parsed as any,
+        } as any)
+    })
 }
 
 export const mappingFormValuesToMapping = (formValues: IMappingFormValues): IMapping => {
