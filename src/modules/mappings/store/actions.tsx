@@ -306,6 +306,41 @@ export interface ICreateMappingSuccessAction {
     }
 }
 
+export interface IUpdateMappingFailureAction {
+    type: MappingsActionTypes.UPDATE_MAPPING_FAILURE
+    payload: {
+        serverName: string
+        mappingId: string
+        error: any
+    }
+}
+
+export const updateMappingFailure = (
+    serverName: string,
+    mappingId: string,
+    error: any
+): IUpdateMappingFailureAction => action(
+    MappingsActionTypes.UPDATE_MAPPING_FAILURE,
+    {
+        serverName,
+        mappingId,
+        error,
+    },
+    {
+        notification: {
+            type: 'danger',
+            content: (
+                <div>
+                    <div>Failed to save mapping</div>
+                    <div style={{ marginTop: 6, fontSize: '0.9em' }}>
+                        {String((error && (error.response || error.message)) || '')}
+                    </div>
+                </div>
+            ),
+            ttl: 5000,
+        },
+    }
+)
 export const createMappingSuccess = (
     serverName: string,
     mappingId: string,
@@ -361,6 +396,7 @@ export type MappingsAction =
     | ISyncMappingWorkingCopyAction
     | IUpdateMappingRequestAction
     | IUpdateMappingSuccessAction
+    | IUpdateMappingFailureAction
     | IDeleteMappingRequestAction
     | IDeleteMappingSuccessAction
     | IInitCreateMappingAction

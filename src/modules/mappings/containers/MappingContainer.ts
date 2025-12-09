@@ -72,10 +72,12 @@ const mapDispatchToProps = (dispatch: Dispatch, props: IOwnProps) => ({
         ))
     },
     updateMapping: (mapping: IMapping) => {
+        // ensure mapping.id matches the current mappingId (user may have edited or omitted it in raw JSON)
+        const mappingToSave = { ...mapping, id: props.mappingId }
         dispatch(updateMappingRequest(
             props.serverName,
             props.mappingId,
-            mapping
+            mappingToSave
         ))
     },
     deleteMapping: () => {

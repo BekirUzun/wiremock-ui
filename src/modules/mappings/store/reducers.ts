@@ -76,6 +76,11 @@ export const mappingReducer = (
                 isUpdating: false,
                 mapping: action.payload.mapping,
             }
+        case MappingsActionTypes.UPDATE_MAPPING_FAILURE:
+            return {
+                ...state,
+                isUpdating: false,
+            }
 
 
         case MappingsActionTypes.DELETE_MAPPING_REQUEST:

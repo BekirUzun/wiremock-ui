@@ -40,6 +40,7 @@ interface IMappingBarProps {
     setBuilderMode(): void
     setJsonMode(): void
     save?: () => void
+    saveDisabled?: boolean
     deleteMapping?: () => void
 }
 
@@ -86,6 +87,7 @@ export default class MappingBar extends React.Component<IMappingBarProps> {
                     {save !== undefined && (
                         <Button
                             onClick={save}
+                            disabled={this.props.saveDisabled}
                             style={actionButtonStyle}
                             variant="primary"
                             icon={<SaveIcon size={16}/>}
