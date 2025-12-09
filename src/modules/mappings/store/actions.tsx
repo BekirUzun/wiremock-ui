@@ -5,6 +5,18 @@ import { IMapping } from '../types'
 import { getMappingLabel } from '../dto'
 import { MappingsActionTypes } from './types'
 
+const formatError = (error: any): string => {
+    if (!error) return ''
+    const candidate = error.response || (error.xhr && error.xhr.responseText) || error.message || error
+    if (candidate === undefined || candidate === null) return ''
+    if (typeof candidate === 'string') return candidate
+    try {
+        return JSON.stringify(candidate, null, 2)
+    } catch (e) {
+        return String(candidate)
+    }
+}
+
 export interface ILoadServerMappingsAction {
     type: MappingsActionTypes.LOAD_SERVER_MAPPINGS
     payload: {
@@ -332,12 +344,12 @@ export const updateMappingFailure = (
             content: (
                 <div>
                     <div>Failed to save mapping</div>
-                    <div style={{ marginTop: 6, fontSize: '0.9em' }}>
-                        {String((error && (error.response || error.message)) || '')}
+                    <div style={{ marginTop: 6, fontSize: '0.9em', whiteSpace: 'pre-wrap' }}>
+                        {formatError(error)}
                     </div>
                 </div>
             ),
-            ttl: 5000,
+            ttl: 10000,
         },
     }
 )

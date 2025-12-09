@@ -132,11 +132,20 @@ export const updateMappingEpic: Epic<MappingsAction, any, IApplicationState> = (
                         payload.mappingId,
                         mapping
                     )),
-                    catchError((error: any) => of(updateMappingFailure(
-                        payload.serverName,
-                        payload.mappingId,
-                        error
-                    )))
+                    catchError((error: any) => {
+                        // log full error for debugging (network response, xhr, stack)
+                        // tslint:disable-next-line:no-console
+                        console.error('updateMapping failed', {
+                            server: payload.serverName,
+                            mappingId: payload.mappingId,
+                            error,
+                        })
+                        return of(updateMappingFailure(
+                            payload.serverName,
+                            payload.mappingId,
+                            error
+                        ))
+                    })
                 )
             })
         )
