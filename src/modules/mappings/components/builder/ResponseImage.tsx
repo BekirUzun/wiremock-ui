@@ -2,7 +2,7 @@ import * as React from 'react'
 import { FormikErrors, FormikTouched } from 'formik'
 import { Textarea } from 'edikit'
 import { IMappingFormValues } from '../../types'
-import { ImagePreview, ImagePreviewImg } from './ImagePreview_styled'
+import { ImagePreviewContainer, ImagePreview, ImagePreviewImg } from './ImagePreview_styled'
 import { FileInputWrapper, FileInput } from './FileInput_styled'
 
 interface IResponseImageProps {
@@ -84,27 +84,43 @@ export default class ResponseImage extends React.Component<IResponseImageProps> 
                         onChange={this.handleFileUpload}
                     />
                 </FileInputWrapper>
-                <Textarea
-                    id="responseBase64Body"
-                    name="responseBase64Body"
-                    value={values.responseBase64Body || ''}
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    placeholder="Base64 encoded image data"
-                    style={{
-                        gridColumnStart: 1,
-                        gridColumnEnd: 9,
-                        minHeight: '120px',
-                        resize: 'vertical'
-                    }}
-                />
-                {values.responseBase64Body && (
-                    <ImagePreview>
-                        <ImagePreviewImg
-                            src={`data:${this.getContentType()};base64,${values.responseBase64Body}`}
-                            alt="Image preview"
+                {values.responseBase64Body ? (
+                    <ImagePreviewContainer>
+                        <Textarea
+                            id="responseBase64Body"
+                            name="responseBase64Body"
+                            value={values.responseBase64Body || ''}
+                            onChange={onChange}
+                            onBlur={onBlur}
+                            placeholder="Base64 encoded image data"
+                            style={{
+                                flex: 1,
+                                minHeight: '120px',
+                                resize: 'vertical'
+                            }}
                         />
-                    </ImagePreview>
+                        <ImagePreview>
+                            <ImagePreviewImg
+                                src={`data:${this.getContentType()};base64,${values.responseBase64Body}`}
+                                alt="Image preview"
+                            />
+                        </ImagePreview>
+                    </ImagePreviewContainer>
+                ) : (
+                    <Textarea
+                        id="responseBase64Body"
+                        name="responseBase64Body"
+                        value={values.responseBase64Body || ''}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        placeholder="Base64 encoded image data"
+                        style={{
+                            gridColumnStart: 1,
+                            gridColumnEnd: 9,
+                            minHeight: '120px',
+                            resize: 'vertical'
+                        }}
+                    />
                 )}
                 {errors.responseBase64Body && touched.responseBase64Body && (
                     <div style={{ color: 'red', gridColumnStart: 1, gridColumnEnd: 9 }}>
