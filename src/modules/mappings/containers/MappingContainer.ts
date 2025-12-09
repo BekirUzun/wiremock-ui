@@ -4,6 +4,7 @@ import { IApplicationState } from '../../../store'
 import { IServer } from '../../servers'
 import Mapping from '../components/Mapping'
 import { IMapping } from '../types'
+import { IMappingsState } from '../store/index'
 import {
     fetchMappingRequest,
     initMappingWorkingCopy,
@@ -22,6 +23,7 @@ interface IPropsFromState {
     server?: IServer
     mapping?: IMapping
     isLoading: boolean
+    serverMappings?: IMappingsState[string]
 }
 
 const mapStateToProps = (
@@ -47,6 +49,7 @@ const mapStateToProps = (
         server,
         isLoading: mapping!.isFetching || mapping!.isUpdating || mapping!.isDeleting,
         mapping: mapping!.workingCopy,
+        serverMappings,
     }
 }
 

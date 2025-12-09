@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { IServer } from '../../servers'
 import { IMapping } from '../types'
+import { IServerMappingsState } from '../store'
 import MappingJsonEditor from './MappingJsonEditor'
 import MappingBuilder from './MappingBuilder'
 import { Wrapper, Overlay } from './Mapping_styled'
@@ -11,6 +12,7 @@ interface IMappingProps {
     server?: IServer
     mapping?: IMapping
     isLoading: boolean
+    serverMappings?: IServerMappingsState
     fetchMapping(): void
     initWorkingCopy(): void
     syncWorkingCopy(update: Partial<IMapping>): void
@@ -56,6 +58,7 @@ export default class Mapping extends React.Component<IMappingProps, IMappingStat
             syncWorkingCopy,
             updateMapping,
             deleteMapping,
+            serverMappings,
         } = this.props
         const { mode } = this.state
 
@@ -73,6 +76,7 @@ export default class Mapping extends React.Component<IMappingProps, IMappingStat
                         mode={mode}
                         setBuilderMode={this.setBuilderMode}
                         setJsonMode={this.setJsonMode}
+                        serverMappings={serverMappings}
                     />
                 )}
                 {mode === 'json' && (

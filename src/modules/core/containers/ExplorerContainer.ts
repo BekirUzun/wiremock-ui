@@ -59,10 +59,38 @@ const mapStateToProps = (
                 },
                 children: [],
             }
+
+            const mappingsByFolder: { [folder: string]: Array<{ id: string, mapping: any }> } = {}
+            const mappingsWithoutFolder: Array<{ id: string, mapping: any }> = []
+
             mappings.ids.forEach(mappingId => {
                 const mapping = mappings.byId[mappingId].mapping
                 if (mapping !== undefined) {
-                    mappingsNode.children!.push({
+                    const folder = mapping.metadata && mapping.metadata.folder
+                    if (folder) {
+                        if (!mappingsByFolder[folder]) {
+                            mappingsByFolder[folder] = []
+                        }
+                        mappingsByFolder[folder].push({ id: mappingId, mapping })
+                    } else {
+                        mappingsWithoutFolder.push({ id: mappingId, mapping })
+                    }
+                }
+            })
+
+            Object.keys(mappingsByFolder).sort().forEach(folder => {
+                const folderNode: ITreeNode = {
+                    id: `${server.name}.mappings.folder.${folder}`,
+                    type: 'folder',
+                    label: folder,
+                    data: {
+                        serverName: server.name,
+                        folder,
+                    },
+                    children: [],
+                }
+                mappingsByFolder[folder].forEach(({ id: mappingId, mapping }) => {
+                    folderNode.children!.push({
                         id: mappingId,
                         type: 'mapping',
                         label: mapping.name || `${mapping.request.method} ${getMappingUrl(mapping)}`,
@@ -72,8 +100,24 @@ const mapStateToProps = (
                             mappingId,
                         },
                     })
-                }
+                })
+                mappingsNode.children!.push(folderNode)
             })
+
+            // Add mappings without folders
+            mappingsWithoutFolder.forEach(({ id: mappingId, mapping }) => {
+                mappingsNode.children!.push({
+                    id: mappingId,
+                    type: 'mapping',
+                    label: mapping.name || `${mapping.request.method} ${getMappingUrl(mapping)}`,
+                    isCurrent: currentContentIds.includes(mappingId),
+                    data: {
+                        serverName: server.name,
+                        mappingId,
+                    },
+                })
+            })
+
             serverNode.children.push(mappingsNode)
         }
 

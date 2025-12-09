@@ -73,6 +73,11 @@ class Explorer extends React.Component<IExplorerProps, IExplorerState> {
             return <PlusCircle size={14} color={theme.colors.accent}/>
         }
 
+        if (node.type === 'folder') {
+            // Folder icon is handled by TreeNode component automatically
+            return undefined
+        }
+
         if (node.type === 'mapping' && node.data !== undefined) {
             const { serverName, mappingId } = node.data
             if (mappingId !== undefined) {
@@ -130,6 +135,10 @@ class Explorer extends React.Component<IExplorerProps, IExplorerState> {
             if (server !== undefined) {
                 loadServerMappings(server)
             }
+        }
+
+        if (node.type === 'folder') {
+            // Folder nodes just expand/collapse, no special action needed
         }
 
         if (node.type === 'mapping' && node.data !== undefined) {

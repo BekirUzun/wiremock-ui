@@ -104,6 +104,7 @@ export const mappingToFormValues = (mapping: IMapping): IMappingFormValues => {
         responseBodyFileName: mapping.response.bodyFileName,
         responseDelayMilliseconds: mapping.response.fixedDelayMilliseconds,
         responseDelayDistribution: mapping.response.delayDistribution,
+        folder: mapping.metadata && mapping.metadata.folder ? mapping.metadata.folder : undefined,
     }
 }
 
@@ -181,7 +182,12 @@ export const mappingFormValuesToMapping = (formValues: IMappingFormValues): IMap
             }), {}),
             fixedDelayMilliseconds: formValues.responseDelayMilliseconds,
             delayDistribution: formValues.responseDelayDistribution,
-        }
+        },
+        ...(formValues.folder ? {
+            metadata: {
+                folder: formValues.folder,
+            }
+        } : {}),
     }
 
     return mapping

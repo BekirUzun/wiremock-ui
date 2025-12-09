@@ -4,6 +4,7 @@ import { IApplicationState } from '../../../store'
 import { IServer } from '../../servers'
 import CreateMapping from '../components/CreateMapping'
 import { IMapping } from '../types'
+import { IServerMappingsState } from '../store/index'
 import {
     initCreateMapping,
     createMappingRequest,
@@ -19,6 +20,7 @@ interface IPropsFromState {
     server?: IServer
     mapping?: IMapping
     isCreating: boolean
+    serverMappings?: IServerMappingsState
 }
 
 const mapStateToProps = (
@@ -51,6 +53,7 @@ const mapStateToProps = (
         server,
         mapping,
         isCreating,
+        serverMappings,
     }
 }
 

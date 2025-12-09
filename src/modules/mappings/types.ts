@@ -119,6 +119,9 @@ export interface IMapping {
     priority?: number
     request: IMappingRequest
     response: IMappingResponse
+    metadata?: {
+        folder?: string
+    }
 }
 
 export interface IMappingCollection {
@@ -167,4 +170,5 @@ export interface IMappingFormValues {
     responseDelayDistribution?:
         | IMappingResponseUniformDelayDistribution
         | IMappingResponseLogNormalDelayDistribution
+    folder?: string
 }
