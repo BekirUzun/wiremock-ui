@@ -64,6 +64,25 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                                 onChange={onChange}
                                 onBlur={onBlur}
                             />
+
+                            <label
+                                htmlFor="responseType"
+                                style={{
+                                    gridColumnStart: 7,
+                                }}
+                            >
+                                Response Type
+                            </label>
+                            <Select
+                                id="responseType"
+                                name="responseType"
+                                value={responseType}
+                                onChange={onChange}
+                                onBlur={onBlur}
+                            >
+                                <option value="text">Text</option>
+                                <option value="image">Image</option>
+                            </Select>
                             {errors.responseStatus && touched.responseStatus && (
                                 <div style={{ color: 'red', gridColumnStart: 6, gridColumnEnd: 9 }}>
                                     {errors.responseStatus}
@@ -118,30 +137,6 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                                     )}
                                 </React.Fragment>
                             ))}
-                            <label
-                                htmlFor="responseType"
-                                style={{
-                                    gridColumnStart: 1,
-                                    gridColumnEnd: 3,
-                                    marginTop: '6px'
-                                }}
-                            >
-                                Response Type
-                            </label>
-                            <Select
-                                id="responseType"
-                                name="responseType"
-                                value={responseType}
-                                onChange={onChange}
-                                onBlur={onBlur}
-                                style={{
-                                    gridColumnStart: 3,
-                                    gridColumnEnd: 6,
-                                }}
-                            >
-                                <option value="text">Text</option>
-                                <option value="image">Image</option>
-                            </Select>
                             <label
                                 htmlFor={isImageMode ? "responseBase64Body" : "responseBody"}
                                 style={{

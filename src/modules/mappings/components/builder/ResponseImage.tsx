@@ -33,9 +33,63 @@ export default class ResponseImage extends React.Component<IResponseImageProps> 
         return result
     }
 
+    updateHeadersForFile = (fileType: string, fileName: string): void => {
+        const updatedHeaders = [...this.props.values.responseHeaders]
+        let headersUpdated = false
+
+        // Update Content-Type header if it exists
+        const contentTypeIndex = updatedHeaders.findIndex(
+            header => header.key.toLowerCase() === 'content-type'
+        )
+        if (contentTypeIndex !== -1) {
+            updatedHeaders[contentTypeIndex] = {
+                ...updatedHeaders[contentTypeIndex],
+                value: fileType
+            }
+            headersUpdated = true
+        }
+
+        // Update Content-Disposition header if it exists
+        const contentDispositionIndex = updatedHeaders.findIndex(
+            header => header.key.toLowerCase() === 'content-disposition'
+        )
+        if (fileName && contentDispositionIndex !== -1) {
+            const currentValue = updatedHeaders[contentDispositionIndex].value
+            // Format: "attachment; filename=\"image1.png\"" or "inline; filename=\"image1.png\""
+            let newValue = currentValue
+            if (currentValue.includes('filename=')) {
+                newValue = currentValue.replace(/filename="[^"]*"/, `filename="${fileName}"`)
+            } else {
+                // If no filename exists, append it
+                const dispositionType = currentValue.split(';')[0].trim() || 'attachment'
+                newValue = `${dispositionType}; filename="${fileName}"`
+            }
+            updatedHeaders[contentDispositionIndex] = {
+                ...updatedHeaders[contentDispositionIndex],
+                value: newValue
+            }
+            headersUpdated = true
+        }
+
+        if (headersUpdated) {
+            const headersEvent = {
+                target: {
+                    name: 'responseHeaders',
+                    value: updatedHeaders,
+                }
+            } as any
+            this.props.onChange(headersEvent)
+        }
+    }
+
     handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files && e.target.files[0]
         if (!file) return
+
+        const fileType = file.type || 'application/octet-stream'
+        const fileName = file.name
+
+        this.updateHeadersForFile(fileType, fileName)
 
         const reader = new FileReader()
         reader.onload = (event) => {
