@@ -27,6 +27,7 @@ interface IMappingBuilderState {
     isRequestOpened: boolean
     isResponseOpened: boolean
     requestParamsType: 'query' | 'headers' | 'cookies' | 'body'
+    newFolderInput: string
 }
 
 const enhance = withFormik<IMappingBuilderProps, IMappingFormValues>({
@@ -52,6 +53,7 @@ class MappingBuilder extends React.Component<
             isRequestOpened: true,
             isResponseOpened: true,
             requestParamsType: 'query',
+            newFolderInput: '',
         }
     }
 
@@ -96,6 +98,27 @@ class MappingBuilder extends React.Component<
             }
         })
         return Array.from(folders).sort()
+    }
+
+    handleFolderSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { setFieldValue, setFieldTouched } = this.props
+        const newValue = e.target.value === '' ? undefined : e.target.value
+        setFieldValue('folder', newValue)
+        setFieldTouched('folder', true)
+        this.setState({ newFolderInput: '' })        
+    }
+
+    handleNewFolderInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { handleChange } = this.props
+        const inputValue = e.target.value
+        this.setState({ newFolderInput: inputValue })
+        const newValue = inputValue.trim() === '' ? undefined : inputValue.trim()
+        handleChange({
+            target: {
+                id: 'folder',
+                value: newValue,
+            }
+        } as any)
     }
 
     render() {
@@ -149,16 +172,7 @@ class MappingBuilder extends React.Component<
                                 <Select
                                     id="folder-select"
                                     value={values.folder && this.getExistingFolders().includes(values.folder) ? values.folder : ''}
-                                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                        const newValue = e.target.value === '' ? undefined : e.target.value
-                                        handleChange({
-                                            target: {
-                                                id: 'folder',
-                                                value: newValue,
-                                            }
-                                        } as any)
-                                        this.handleBlur(e)
-                                    }}
+                                    onChange={this.handleFolderSelectChange}
                                     style={{
                                         gridColumnStart: 2,
                                         gridColumnEnd: 4,
@@ -175,16 +189,8 @@ class MappingBuilder extends React.Component<
                                 <Input
                                     id="folder"
                                     placeholder="Type to create new folder..."
-                                    value={values.folder || ''}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                        const newValue = e.target.value.trim() === '' ? undefined : e.target.value.trim()
-                                        handleChange({
-                                            target: {
-                                                id: 'folder',
-                                                value: newValue,
-                                            }
-                                        } as any)
-                                    }}
+                                    value={this.state.newFolderInput}
+                                    onChange={this.handleNewFolderInputChange}
                                     onBlur={this.handleBlur}
                                     style={{
                                         gridColumnStart: 6,

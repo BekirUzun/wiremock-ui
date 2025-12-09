@@ -114,7 +114,7 @@ class TreeNode<NodeData> extends React.Component<ITreeNodeProps<NodeData>, ITree
                 <Folder
                     color={theme.colors.muted}
                     size={iconSize}
-                    style={{ flexShrink: 0 }}
+                    style={{ flexShrink: 0 }}   
                 />
             )
         }
