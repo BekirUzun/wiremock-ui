@@ -74,6 +74,17 @@ export interface IThemeTree {
             color: string
         }
     }
+    contextMenu: {
+        background: string
+        border: string
+        item: {
+            color: string
+            background: string
+            hover: {
+                background: string
+            }
+        }
+    }
 }
 
 export interface IThemeBuilder {

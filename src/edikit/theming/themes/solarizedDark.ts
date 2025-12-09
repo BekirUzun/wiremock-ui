@@ -47,6 +47,17 @@ const theme: ITheme = {
                 color: '#fff',
             },
         },
+        contextMenu: {
+            background: '#013340',
+            border: '#014c5e',
+            item: {
+                color: colors.text,
+                background: 'transparent',
+                hover: {
+                    background: '#014c5e',
+                },
+            },
+        },
     },
     builder: {
         spacing: '12px',

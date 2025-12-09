@@ -3,7 +3,8 @@ import { connect } from 'react-redux'
 import { panesCurrentContentsSelector, uuid } from 'edikit'
 import { ITreeNode } from '../components/Tree'
 import { IApplicationState } from '../../../store'
-import { loadServerMappings, getMappingUrl } from '../../mappings'
+import { loadServerMappings, getMappingUrl, deleteMappingRequest, fetchMappingRequest, createMappingRequest } from '../../mappings'
+import { IMappingsState } from '../../mappings/store'
 import { IServer } from '../../servers'
 import Explorer from '../components/Explorer'
 
@@ -16,6 +17,7 @@ const mapStateToProps = (
 ): {
     tree: ITreeNode
     servers: IServer[]
+    serversMappings: typeof serversMappings
 } => {
     const currentContentIds: string[] = panesCurrentContentsSelector(panes, 'default')
         .map(({ id }) => id)
@@ -84,12 +86,42 @@ const mapStateToProps = (
         label: 'create server',
     })
 
-    return { tree, servers }
+    return { tree, servers, serversMappings }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     loadServerMappings: (server: IServer) => {
         dispatch(loadServerMappings(server))
+    },
+    cloneMapping: (serverName: string, mappingId: string, serversMappings: IMappingsState, servers: IServer[]) => {
+        const server = servers.find(s => s.name === serverName)
+        if (!server) return
+
+        const serverMappings = serversMappings[serverName]
+        if (!serverMappings) return
+
+        const mappingState = serverMappings.byId[mappingId]
+        if (!mappingState || !mappingState.mapping) {
+            // If mapping is not loaded, fetch it first
+            // For now, we'll just return - in a real scenario, we might want to show an error
+            // or fetch the mapping and then clone it
+            return
+        }
+
+        const mapping = mappingState.mapping
+        const creationId = uuid()
+        const clonedMapping = {
+            ...mapping,
+            name: mapping.name ? `${mapping.name} (copy)` : undefined,
+        }
+        // Remove id and uuid so a new one is created
+        delete (clonedMapping as any).id
+        delete (clonedMapping as any).uuid
+
+        dispatch(createMappingRequest(serverName, creationId, clonedMapping))
+    },
+    deleteMapping: (serverName: string, mappingId: string) => {
+        dispatch(deleteMappingRequest(serverName, mappingId))
     },
 })
 

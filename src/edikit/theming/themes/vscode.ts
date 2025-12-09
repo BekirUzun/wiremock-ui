@@ -1,3 +1,4 @@
+import 'brace'
 import 'brace/theme/monokai'
 import { css } from 'styled-components'
 import { ITheme, IThemeColors, IThemeTypography } from '../types'
@@ -24,8 +25,8 @@ const colors: IThemeColors = {
     overSuccess: '#113214',
     warning: '#d7ba7d',
     overWarning: '#2b2114',
-    danger: '#f44747',
-    overDanger: '#2b1212',
+    danger: '#b40c0c',
+    overDanger: '#d4d4d4',
 }
 
 const theme: ITheme = {
@@ -44,6 +45,17 @@ const theme: ITheme = {
             current: {
                 background: '#262626',
                 color: '#fff',
+            },
+        },
+        contextMenu: {
+            background: '#252526',
+            border: '#3e3e42',
+            item: {
+                color: colors.text,
+                background: 'transparent',
+                hover: {
+                    background: '#2a2d2e',
+                },
             },
         },
     },

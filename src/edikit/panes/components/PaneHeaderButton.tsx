@@ -28,6 +28,14 @@ class PaneHeaderButton<ContentData> extends React.Component<IPaneHeaderButtonPro
         removeContent(content.id)
     }
 
+    handleMouseDown = (e: React.MouseEvent) => {
+        // Middle mouse button (button === 1) closes the tab
+        if (e.button === 1) {
+            e.preventDefault()
+            this.handleRemove(e)
+        }
+    }
+
     render() {
         const { pane, content, contentTypes, removeContent } = this.props
 
@@ -44,7 +52,7 @@ class PaneHeaderButton<ContentData> extends React.Component<IPaneHeaderButtonPro
         const icon = contentType.renderIcon(renderContext)
 
         return (
-            <Container isCurrent={content.isCurrent} onClick={this.handleOpen}>
+            <Container isCurrent={content.isCurrent} onClick={this.handleOpen} onMouseDown={this.handleMouseDown}>
                 {icon}
                 <Label>{label}</Label>
                 <RemoveButton onClick={this.handleRemove}>

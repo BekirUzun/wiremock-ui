@@ -24,8 +24,8 @@ const colors: IThemeColors = {
     overSuccess: '#000',
     warning: '#ffb400',
     overWarning: '#000',
-    danger: '#b32c00',
-    overDanger: '#000',
+    danger: '#b40c0c',
+    overDanger: '#d4d4d4',
 }
 
 const theme: ITheme = {
@@ -44,6 +44,17 @@ const theme: ITheme = {
             current: {
                 background: '#191225',
                 color: '#fff',
+            },
+        },
+        contextMenu: {
+            background: '#111',
+            border: '#222',
+            item: {
+                color: colors.text,
+                background: 'transparent',
+                hover: {
+                    background: '#222',
+                },
             },
         },
     },
