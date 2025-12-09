@@ -81,6 +81,8 @@ export const mappingToFormValues = (mapping: IMapping): IMappingFormValues => {
         })
     }
 
+    const responseType: 'text' | 'image' = mapping.response.base64Body !== undefined ? 'image' : 'text'
+
     return {
         id: mapping.id,
         uuid: mapping.uuid,
@@ -97,6 +99,8 @@ export const mappingToFormValues = (mapping: IMapping): IMappingFormValues => {
         responseFault: mapping.response.fault,
         responseHeaders,
         responseBody: mapping.response.body,
+        responseBase64Body: mapping.response.base64Body,
+        responseType,
         responseBodyFileName: mapping.response.bodyFileName,
         responseDelayMilliseconds: mapping.response.fixedDelayMilliseconds,
         responseDelayDistribution: mapping.response.delayDistribution,
@@ -166,7 +170,10 @@ export const mappingFormValuesToMapping = (formValues: IMappingFormValues): IMap
         response: {
             status: formValues.responseStatus,
             fault: formValues.responseFault,
-            body: formValues.responseBody,
+            ...(formValues.responseType === 'image' 
+                ? { base64Body: formValues.responseBase64Body }
+                : { body: formValues.responseBody }
+            ),
             bodyFileName: formValues.responseBodyFileName,
             headers: formValues.responseHeaders.reduce((acc, header) => ({
                 ...acc,

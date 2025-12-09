@@ -101,6 +101,7 @@ export interface IMappingResponse {
     status: number
     fault?: MappingResponseFault
     body?: string
+    base64Body?: string
     bodyFileName?: string
     headers?: {
         [key: string]: string
@@ -159,6 +160,8 @@ export interface IMappingFormValues {
     responseFault?: MappingResponseFault
     responseHeaders: IMappingResponseHeaderFormValue[]
     responseBody?: string
+    responseBase64Body?: string
+    responseType?: 'text' | 'image'
     responseBodyFileName?: string
     responseDelayMilliseconds?: number
     responseDelayDistribution?:
