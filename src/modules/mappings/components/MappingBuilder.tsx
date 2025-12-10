@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { InjectedFormikProps, withFormik } from 'formik'
-import { Builder, Block, Input } from 'edikit'
+import { Builder, Block, Input, Select } from 'edikit'
 import { IMapping, IMappingFormValues } from '../types'
+import { IServerMappingsState } from '../store'
 import { mappingValidationSchema } from '../validation'
 import { mappingToFormValues, mappingFormValuesToMapping } from '../dto'
 import { Container, Content } from './Mapping_styled'
@@ -19,12 +20,14 @@ interface IMappingBuilderProps {
     mode: 'builder' | 'json'
     setBuilderMode(): void
     setJsonMode(): void
+    serverMappings?: IServerMappingsState
 }
 
 interface IMappingBuilderState {
     isRequestOpened: boolean
     isResponseOpened: boolean
     requestParamsType: 'query' | 'headers' | 'cookies' | 'body'
+    newFolderInput: string
 }
 
 const enhance = withFormik<IMappingBuilderProps, IMappingFormValues>({
@@ -50,6 +53,7 @@ class MappingBuilder extends React.Component<
             isRequestOpened: true,
             isResponseOpened: true,
             requestParamsType: 'query',
+            newFolderInput: '',
         }
     }
 
@@ -80,6 +84,41 @@ class MappingBuilder extends React.Component<
 
     updateRequestParamsType = (requestParamsType: 'query' | 'headers' | 'cookies' | 'body') => {
         this.setState({ requestParamsType })
+    }
+
+    getExistingFolders = (): string[] => {
+        const { serverMappings } = this.props
+        if (!serverMappings) return []
+
+        const folders = new Set<string>()
+        serverMappings.ids.forEach(mappingId => {
+            const mappingState = serverMappings.byId[mappingId]
+            if (mappingState && mappingState.mapping && mappingState.mapping.metadata && mappingState.mapping.metadata.folder) {
+                folders.add(mappingState.mapping.metadata.folder)
+            }
+        })
+        return Array.from(folders).sort()
+    }
+
+    handleFolderSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { setFieldValue, setFieldTouched } = this.props
+        const newValue = e.target.value === '' ? undefined : e.target.value
+        setFieldValue('folder', newValue)
+        setFieldTouched('folder', true)
+        this.setState({ newFolderInput: '' })        
+    }
+
+    handleNewFolderInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { handleChange } = this.props
+        const inputValue = e.target.value
+        this.setState({ newFolderInput: inputValue })
+        const newValue = inputValue.trim() === '' ? undefined : inputValue.trim()
+        handleChange({
+            target: {
+                id: 'folder',
+                value: newValue,
+            }
+        } as any)
     }
 
     render() {
@@ -124,6 +163,37 @@ class MappingBuilder extends React.Component<
                                     onBlur={this.handleBlur}
                                     style={{
                                         gridColumnStart: 2,
+                                        gridColumnEnd: 9,
+                                    }}
+                                />
+                                <label htmlFor="folder-select" style={{ gridColumnStart: 1 }}>
+                                    Folder
+                                </label>
+                                <Select
+                                    id="folder-select"
+                                    value={values.folder && this.getExistingFolders().includes(values.folder) ? values.folder : ''}
+                                    onChange={this.handleFolderSelectChange}
+                                    style={{
+                                        gridColumnStart: 2,
+                                        gridColumnEnd: 4,
+                                    }}
+                                >
+                                    <option value="">No folder</option>
+                                    {this.getExistingFolders().map(folder => (
+                                        <option key={folder} value={folder}>{folder}</option>
+                                    ))}
+                                </Select>
+                                <label htmlFor="folder" style={{ gridColumnStart: 5 }}>
+                                    Create Folder
+                                </label>
+                                <Input
+                                    id="folder"
+                                    placeholder="Type to create new folder..."
+                                    value={this.state.newFolderInput}
+                                    onChange={this.handleNewFolderInputChange}
+                                    onBlur={this.handleBlur}
+                                    style={{
+                                        gridColumnStart: 6,
                                         gridColumnEnd: 9,
                                     }}
                                 />

@@ -16,6 +16,7 @@ export interface IButtonProps {
     iconPlacement: ButtonIconPlacement
     style?: React.CSSProperties
     onClick?: any
+    disabled?: boolean
 }
 
 export default class Button extends React.Component<IButtonProps> {
@@ -26,7 +27,7 @@ export default class Button extends React.Component<IButtonProps> {
     }
 
     render() {
-        const { label, children, variant, size, icon, iconPlacement, ...rest } = this.props
+        const { label, children, variant, size, icon, iconPlacement, disabled, onClick, ...rest } = this.props
 
         let content = null
         if (children) {
@@ -42,7 +43,9 @@ export default class Button extends React.Component<IButtonProps> {
                 size={size}
                 hasContent={content !== null}
                 hasIcon={icon !== null}
+                disabled={disabled}
                 tabIndex={0}
+                onClick={disabled ? undefined : onClick}
             >
                 {icon && iconPlacement === 'prepend' && icon}
                 {label || children}

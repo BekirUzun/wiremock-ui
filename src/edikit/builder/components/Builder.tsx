@@ -9,6 +9,7 @@ const Container = styled.div`
     overflow-x: hidden;
     overflow-y: auto;
     background: ${props => props.theme.builder.background};
+    ${props => props.theme.builder.css}
 `
 
 const Header = styled.header`

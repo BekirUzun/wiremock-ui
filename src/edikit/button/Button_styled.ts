@@ -5,6 +5,7 @@ export interface IContainerProps {
     hasContent: boolean
     size: 'normal' | 'large'
     variant: 'default' | 'primary' | 'success' | 'warning' | 'danger'
+    disabled?: boolean
 }
 
 export const Container = styled.span<IContainerProps>`
@@ -12,7 +13,7 @@ export const Container = styled.span<IContainerProps>`
     align-items: center;
     white-space: nowrap;
     user-select: none;
-    cursor: pointer;
+    cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
     border: 1px solid transparent;
     border-radius: 2px;
     font-weight: 500;
@@ -58,6 +59,8 @@ export const Container = styled.span<IContainerProps>`
 
         return props.theme.colors.background
     }};
+    opacity: ${props => (props.disabled ? 0.6 : 1)};
+    pointer-events: ${props => (props.disabled ? 'none' : 'auto')};
     &:focus {
         outline: 0;
     }

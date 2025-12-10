@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Button } from 'edikit'
-import { IMappingFormValues } from '../../types'
+import { IMappingFormValues, mappingRequestMethods } from '../../types'
 
 interface IRequestParamsSwitcherProps {
     paramsType: 'query' | 'headers' | 'cookies' | 'body'
@@ -54,18 +54,21 @@ export default class RequestParamsSwitcher extends React.Component<IRequestParam
                     Cookies
                     {values.requestCookies.length > 0 ? ` [${values.requestCookies.length}]` : ''}
                 </Button>
-                <Button
-                    variant={paramsType === 'body' ? 'primary' : 'default'}
-                    onClick={() => { onChange('body') }}
-                    style={{
-                        gridColumnStart: 7,
-                        gridColumnEnd: 9,
-                        height: '30px',
-                    }}
-                >
-                    Body
-                    {values.requestBodyPatterns.length > 0 ? ` [${values.requestBodyPatterns.length}]` : ''}
-                </Button>
+
+                {values.method !== 'GET' && (
+                    <Button
+                        variant={paramsType === 'body' ? 'primary' : 'default'}
+                        onClick={() => { onChange('body') }}
+                        style={{
+                            gridColumnStart: 7,
+                            gridColumnEnd: 9,
+                            height: '30px',
+                        }}
+                    >
+                        Body
+                        {values.requestBodyPatterns.length > 0 ? ` [${values.requestBodyPatterns.length}]` : ''}
+                    </Button>
+                )}
             </React.Fragment>
         )
     }

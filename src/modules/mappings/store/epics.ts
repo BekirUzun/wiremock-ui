@@ -1,6 +1,6 @@
 import { Epic, combineEpics } from 'redux-observable'
 import { of, EMPTY, from } from 'rxjs'
-import { mergeMap, map, flatMap } from 'rxjs/operators'
+import { mergeMap, map, flatMap, catchError } from 'rxjs/operators'
 import { omit } from 'lodash'
 import { removeContentFromAllPanesAction, addContentToCurrentPaneAction } from 'edikit'
 import {
@@ -16,6 +16,7 @@ import {
     loadServerMappingsSuccess,
     createMappingSuccess,
     updateMappingSuccess,
+    updateMappingFailure,
     fetchMappingSuccess,
     deleteMappingSuccess,
     MappingsAction,
@@ -130,7 +131,21 @@ export const updateMappingEpic: Epic<MappingsAction, any, IApplicationState> = (
                         payload.serverName,
                         payload.mappingId,
                         mapping
-                    ))
+                    )),
+                    catchError((error: any) => {
+                        // log full error for debugging (network response, xhr, stack)
+                        // tslint:disable-next-line:no-console
+                        console.error('updateMapping failed', {
+                            server: payload.serverName,
+                            mappingId: payload.mappingId,
+                            error,
+                        })
+                        return of(updateMappingFailure(
+                            payload.serverName,
+                            payload.mappingId,
+                            error
+                        ))
+                    })
                 )
             })
         )

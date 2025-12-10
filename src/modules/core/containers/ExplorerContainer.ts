@@ -3,7 +3,8 @@ import { connect } from 'react-redux'
 import { panesCurrentContentsSelector, uuid } from 'edikit'
 import { ITreeNode } from '../components/Tree'
 import { IApplicationState } from '../../../store'
-import { loadServerMappings, getMappingUrl } from '../../mappings'
+import { loadServerMappings, getMappingUrl, deleteMappingRequest, fetchMappingRequest, createMappingRequest } from '../../mappings'
+import { IMappingsState } from '../../mappings/store'
 import { IServer } from '../../servers'
 import Explorer from '../components/Explorer'
 
@@ -16,6 +17,7 @@ const mapStateToProps = (
 ): {
     tree: ITreeNode
     servers: IServer[]
+    serversMappings: typeof serversMappings
 } => {
     const currentContentIds: string[] = panesCurrentContentsSelector(panes, 'default')
         .map(({ id }) => id)
@@ -57,10 +59,38 @@ const mapStateToProps = (
                 },
                 children: [],
             }
+
+            const mappingsByFolder: { [folder: string]: Array<{ id: string, mapping: any }> } = {}
+            const mappingsWithoutFolder: Array<{ id: string, mapping: any }> = []
+
             mappings.ids.forEach(mappingId => {
                 const mapping = mappings.byId[mappingId].mapping
                 if (mapping !== undefined) {
-                    mappingsNode.children!.push({
+                    const folder = mapping.metadata && mapping.metadata.folder
+                    if (folder) {
+                        if (!mappingsByFolder[folder]) {
+                            mappingsByFolder[folder] = []
+                        }
+                        mappingsByFolder[folder].push({ id: mappingId, mapping })
+                    } else {
+                        mappingsWithoutFolder.push({ id: mappingId, mapping })
+                    }
+                }
+            })
+
+            Object.keys(mappingsByFolder).sort().forEach(folder => {
+                const folderNode: ITreeNode = {
+                    id: `${server.name}.mappings.folder.${folder}`,
+                    type: 'folder',
+                    label: folder,
+                    data: {
+                        serverName: server.name,
+                        folder,
+                    },
+                    children: [],
+                }
+                mappingsByFolder[folder].forEach(({ id: mappingId, mapping }) => {
+                    folderNode.children!.push({
                         id: mappingId,
                         type: 'mapping',
                         label: mapping.name || `${mapping.request.method} ${getMappingUrl(mapping)}`,
@@ -70,8 +100,24 @@ const mapStateToProps = (
                             mappingId,
                         },
                     })
-                }
+                })
+                mappingsNode.children!.push(folderNode)
             })
+
+            // Add mappings without folders
+            mappingsWithoutFolder.forEach(({ id: mappingId, mapping }) => {
+                mappingsNode.children!.push({
+                    id: mappingId,
+                    type: 'mapping',
+                    label: mapping.name || `${mapping.request.method} ${getMappingUrl(mapping)}`,
+                    isCurrent: currentContentIds.includes(mappingId),
+                    data: {
+                        serverName: server.name,
+                        mappingId,
+                    },
+                })
+            })
+
             serverNode.children.push(mappingsNode)
         }
 
@@ -84,12 +130,42 @@ const mapStateToProps = (
         label: 'create server',
     })
 
-    return { tree, servers }
+    return { tree, servers, serversMappings }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     loadServerMappings: (server: IServer) => {
         dispatch(loadServerMappings(server))
+    },
+    cloneMapping: (serverName: string, mappingId: string, serversMappings: IMappingsState, servers: IServer[]) => {
+        const server = servers.find(s => s.name === serverName)
+        if (!server) return
+
+        const serverMappings = serversMappings[serverName]
+        if (!serverMappings) return
+
+        const mappingState = serverMappings.byId[mappingId]
+        if (!mappingState || !mappingState.mapping) {
+            // If mapping is not loaded, fetch it first
+            // For now, we'll just return - in a real scenario, we might want to show an error
+            // or fetch the mapping and then clone it
+            return
+        }
+
+        const mapping = mappingState.mapping
+        const creationId = uuid()
+        const clonedMapping = {
+            ...mapping,
+            name: mapping.name ? `${mapping.name} (copy)` : undefined,
+        }
+        // Remove id and uuid so a new one is created
+        delete (clonedMapping as any).id
+        delete (clonedMapping as any).uuid
+
+        dispatch(createMappingRequest(serverName, creationId, clonedMapping))
+    },
+    deleteMapping: (serverName: string, mappingId: string) => {
+        dispatch(deleteMappingRequest(serverName, mappingId))
     },
 })
 

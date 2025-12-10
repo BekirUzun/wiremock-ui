@@ -12,7 +12,7 @@ export const Icons = styled.div<IconsProps>`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: ${props => props.iconCount * iconSize + (props.iconCount - 1) * iconSpacing}px;
+    min-width: ${props => props.iconCount * iconSize + (props.iconCount - 1) * iconSpacing}px;
     margin-right: ${iconSpacing}px;
     flex-shrink: 0;
 `
@@ -60,4 +60,27 @@ export const CurrentIndicator = styled.span`
     border-radius: 3px;
     margin-left: ${iconSpacing}px;
     background: ${props => props.theme.colors.accent};
+`
+
+export const ActionsButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 4px;
+    margin-left: ${iconSpacing}px;
+    margin-right: 4px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: ${props => props.theme.colors.muted};
+    transition: color 150ms;
+    flex-shrink: 0;
+
+    &:hover {
+        color: ${props => props.theme.colors.text};
+    }
+
+    &:focus {
+        outline: none;
+    }
 `

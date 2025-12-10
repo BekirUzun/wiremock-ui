@@ -4,6 +4,7 @@ import { IApplicationState } from '../../../store'
 import { IServer } from '../../servers'
 import Mapping from '../components/Mapping'
 import { IMapping } from '../types'
+import { IMappingsState } from '../store/index'
 import {
     fetchMappingRequest,
     initMappingWorkingCopy,
@@ -22,6 +23,7 @@ interface IPropsFromState {
     server?: IServer
     mapping?: IMapping
     isLoading: boolean
+    serverMappings?: IMappingsState[string]
 }
 
 const mapStateToProps = (
@@ -47,6 +49,7 @@ const mapStateToProps = (
         server,
         isLoading: mapping!.isFetching || mapping!.isUpdating || mapping!.isDeleting,
         mapping: mapping!.workingCopy,
+        serverMappings,
     }
 }
 
@@ -72,10 +75,12 @@ const mapDispatchToProps = (dispatch: Dispatch, props: IOwnProps) => ({
         ))
     },
     updateMapping: (mapping: IMapping) => {
+        // ensure mapping.id matches the current mappingId (user may have edited or omitted it in raw JSON)
+        const mappingToSave = { ...mapping, id: props.mappingId }
         dispatch(updateMappingRequest(
             props.serverName,
             props.mappingId,
-            mapping
+            mappingToSave
         ))
     },
     deleteMapping: () => {

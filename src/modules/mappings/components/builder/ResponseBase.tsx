@@ -1,8 +1,9 @@
 import * as React from 'react'
 import { Trash2, PlusCircle } from 'react-feather'
 import { FieldArray, FormikErrors, FormikTouched, getIn } from 'formik'
-import { Button, Input } from 'edikit'
+import { Button, Input, Textarea, Select } from 'edikit'
 import { IMappingFormValues } from '../../types'
+import ResponseImage from './ResponseImage'
 
 interface IResponseBaseProps {
     values: IMappingFormValues
@@ -23,6 +24,9 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
             onBlur,
             sync,
         } = this.props
+
+        const responseType = values.responseType || 'text'
+        const isImageMode = responseType === 'image'
 
         return (
             <FieldArray
@@ -60,6 +64,25 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                                 onChange={onChange}
                                 onBlur={onBlur}
                             />
+
+                            <label
+                                htmlFor="responseType"
+                                style={{
+                                    gridColumnStart: 7,
+                                }}
+                            >
+                                Response Type
+                            </label>
+                            <Select
+                                id="responseType"
+                                name="responseType"
+                                value={responseType}
+                                onChange={onChange}
+                                onBlur={onBlur}
+                            >
+                                <option value="text">Text</option>
+                                <option value="image">Image</option>
+                            </Select>
                             {errors.responseStatus && touched.responseStatus && (
                                 <div style={{ color: 'red', gridColumnStart: 6, gridColumnEnd: 9 }}>
                                     {errors.responseStatus}
@@ -114,6 +137,48 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                                     )}
                                 </React.Fragment>
                             ))}
+                            <label
+                                htmlFor={isImageMode ? "responseBase64Body" : "responseBody"}
+                                style={{
+                                    gridColumnStart: 1,
+                                    gridColumnEnd: 9,
+                                    marginTop: '6px'
+                                }}
+                            >
+                                {isImageMode ? 'Image Body (Base64)' : 'Body'}
+                            </label>
+                            {isImageMode ? (
+                                <ResponseImage
+                                    values={values}
+                                    errors={errors}
+                                    touched={touched}
+                                    onChange={onChange}
+                                    onBlur={onBlur}
+                                    sync={sync}
+                                />
+                            ) : (
+                                <>
+                                    <Textarea
+                                        id="responseBody"
+                                        name="responseBody"
+                                        value={values.responseBody || ''}
+                                        onChange={onChange}
+                                        onBlur={onBlur}
+                                        placeholder="Response body"
+                                        style={{
+                                            gridColumnStart: 1,
+                                            gridColumnEnd: 9,
+                                            minHeight: '120px',
+                                            resize: 'vertical'
+                                        }}
+                                    />
+                                    {errors.responseBody && touched.responseBody && (
+                                        <div style={{ color: 'red', gridColumnStart: 1, gridColumnEnd: 9 }}>
+                                            {errors.responseBody}
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </React.Fragment>
                     )
                 }}
