@@ -29,6 +29,7 @@ import {
 } from './actions'
 import { IMapping } from '../types'
 import { MappingsActionTypes } from './types'
+import { handleNetworkError } from '../../../utils/errorHandler'
 
 export const shouldLoadServerMappingsEpic: Epic<MappingsAction, any, IApplicationState> = (action$, state$) =>
     action$.ofType(MappingsActionTypes.LOAD_SERVER_MAPPINGS)
@@ -54,7 +55,10 @@ export const loadServerMappingsEpic: Epic<MappingsAction, any, IApplicationState
                     map(({ mappings }) => loadServerMappingsSuccess(
                         payload.server,
                         mappings
-                    ))
+                    )),
+                    catchError((error: any) => {
+                        return of(handleNetworkError(error, `Failed to load mappings from ${payload.server.name}`))
+                    })
                 )
             )
         )
@@ -73,7 +77,10 @@ export const fetchMappingsEpic: Epic<MappingsAction, any, IApplicationState> = (
                         payload.serverName,
                         payload.mappingId,
                         mapping
-                    ))
+                    )),
+                    catchError((error: any) => {
+                        return of(handleNetworkError(error, `Failed to fetch mapping ${payload.mappingId}`))
+                    })
                 )
             })
         )
@@ -112,7 +119,10 @@ export const createMappingEpic: Epic<MappingsAction, any, IApplicationState> = (
                                 },
                             }
                         ),
-                    ]))
+                    ])),
+                    catchError((error: any) => {
+                        return of(handleNetworkError(error, `Failed to create mapping on ${payload.serverName}`))
+                    })
                 )
             })
         )
@@ -140,11 +150,14 @@ export const updateMappingEpic: Epic<MappingsAction, any, IApplicationState> = (
                             mappingId: payload.mappingId,
                             error,
                         })
-                        return of(updateMappingFailure(
-                            payload.serverName,
-                            payload.mappingId,
-                            error
-                        ))
+                        return from([
+                            updateMappingFailure(
+                                payload.serverName,
+                                payload.mappingId,
+                                error
+                            ),
+                            handleNetworkError(error, `Failed to update mapping ${payload.mappingId}`)
+                        ])
                     })
                 )
             })
@@ -169,7 +182,10 @@ export const deleteMappingEpic: Epic<MappingsAction, any, IApplicationState> = (
                             payload.serverName,
                             payload.mappingId
                         ),
-                    ]))
+                    ])),
+                    catchError((error: any) => {
+                        return of(handleNetworkError(error, `Failed to delete mapping ${payload.mappingId}`))
+                    })
                 )
             })
         )
