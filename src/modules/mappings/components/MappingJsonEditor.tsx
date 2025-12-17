@@ -5,6 +5,7 @@ import { ITheme } from 'edikit'
 import { IMapping } from '../types'
 import { Container, Content } from './Mapping_styled'
 import MappingBar from './MappingBar'
+import { beautifyJson } from '../../../utils/beautifyUtils'
 
 interface IMappingJsonEditorProps {
     mapping: IMapping
@@ -95,11 +96,16 @@ class MappingJsonEditor extends React.Component<IMappingJsonEditorProps, IMappin
     }
 
     onEditorLoad = (editor: any) => {
-        // add keyboard shortcut for save (Cmd/Ctrl+S)
         editor.commands.addCommand({
             name: 'save',
             bindKey: { win: 'Ctrl-S', mac: 'Command-S' },
             exec: () => this.handleSave(),
+        })
+
+        editor.commands.addCommand({
+            name: 'beautify',
+            bindKey: { win: 'Alt-Shift-F', mac: 'Command-Shift-F' },
+            exec: () => this.onChange( beautifyJson(this.state.source)),
         })
     }
 
@@ -124,12 +130,11 @@ class MappingJsonEditor extends React.Component<IMappingJsonEditorProps, IMappin
                     deleteMapping={deleteMapping}
                     save={this.handleSave}
                     saveDisabled={!!error}
+                    beautify={() => this.onChange(beautifyJson(this.state.source))}
                 />
-                {error && (
-                    <div style={{ color: '#c0392b', padding: '8px 16px' }}>
-                        JSON error: {error}
-                    </div>
-                )}
+                <div style={{ color: '#c0392b', padding: '8px 16px', minHeight: '3rem' }}>
+                    {error && `JSON error: ${error}`}
+                </div>
                 <Content isLoading={isLoading}>
                     <AceEditor
                         mode="json"

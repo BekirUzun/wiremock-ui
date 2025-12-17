@@ -2,8 +2,10 @@ import * as React from 'react'
 import { withTheme } from 'styled-components'
 import AceEditor from 'react-ace'
 import { FormikErrors, FormikTouched } from 'formik'
-import { ITheme } from 'edikit'
+import { ITheme, Button } from 'edikit'
 import { IMappingFormValues } from '../../types'
+import { Terminal as BeautifyIcon } from 'react-feather'
+import { beautifyJson } from '../../../../utils/beautifyUtils'
 
 interface IResponseJsonBodyProps {
     values: IMappingFormValues
@@ -90,6 +92,15 @@ class ResponseJsonBody extends React.Component<IResponseJsonBodyProps, IResponse
         }
     }
 
+    onEditorLoad = (editor: any) => {
+        // Add keyboard shortcut for beautify (Shift+Alt+F)
+        editor.commands.addCommand({
+            name: 'beautify',
+            bindKey: { win: 'Alt-Shift-F', mac: 'Command-Shift-F' },
+            exec: () => this.handleChange(beautifyJson(this.state.jsonValue)),
+        })
+    }
+
     render() {
         const {
             errors,
@@ -102,16 +113,33 @@ class ResponseJsonBody extends React.Component<IResponseJsonBodyProps, IResponse
 
         return (
             <>
-                <label
-                    htmlFor="responseBody"
+                <div
                     style={{
                         gridColumnStart: 1,
                         gridColumnEnd: 9,
-                        marginTop: '6px'
+                        marginTop: '6px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                     }}
                 >
-                    Body (JSON)
-                </label>
+                    <label htmlFor="responseBody">
+                        Body (JSON)
+                    </label>
+                    <Button
+                        onClick={() => this.handleChange(beautifyJson(this.state.jsonValue))}
+                        style={{
+                            fontSize: '11px',
+                            lineHeight: '1.6em',
+                            height: '28px',
+                            padding: '0 8px',
+                        }}
+                        variant="default"
+                        icon={<BeautifyIcon size={14} style={{ marginRight: '4px' }}/>}
+                    >
+                        Beautify
+                    </Button>
+                </div>
                 <div
                     style={{
                         gridColumnStart: 1,
@@ -126,6 +154,7 @@ class ResponseJsonBody extends React.Component<IResponseJsonBodyProps, IResponse
                         theme={theme.editor.theme}
                         value={jsonValue}
                         onChange={this.handleChange}
+                        onLoad={this.onEditorLoad}
                         readOnly={false}
                         name="responseJsonBody"
                         showPrintMargin={false}

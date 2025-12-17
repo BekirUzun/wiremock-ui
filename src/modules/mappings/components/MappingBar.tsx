@@ -6,6 +6,7 @@ import {
     Code as JsonModeIcon,
     Grid as BuilderModeIcon,
     Trash2 as DeleteIcon,
+    Terminal as BeautifyIcon,
     // AlertOctagon as HasErrorIcon,
     // X as CancelIcon,
     // Copy as CloneIcon,
@@ -42,6 +43,7 @@ interface IMappingBarProps {
     save?: () => void
     saveDisabled?: boolean
     deleteMapping?: () => void
+    beautify?: () => void
 }
 
 export default class MappingBar extends React.Component<IMappingBarProps> {
@@ -84,6 +86,14 @@ export default class MappingBar extends React.Component<IMappingBarProps> {
                     </Button>
                 </ButtonsWrapper>
                 <ButtonsWrapper>
+                    {this.props.mode === 'json' && this.props.beautify !== undefined && (
+                        <Button
+                            onClick={this.props.beautify}
+                            style={actionButtonStyle}
+                            variant="default"
+                            icon={<BeautifyIcon size={16}/>}
+                        />
+                    )}
                     {save !== undefined && (
                         <Button
                             onClick={save}

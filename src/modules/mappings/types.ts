@@ -25,6 +25,14 @@ export type MappingRequestParamMatchType =
     | 'equalToJson'
     | 'matchesJsonPath'
 
+export type MappingResponseType = 
+    | 'json'
+    | 'image'
+    | 'text'
+    | 'video'
+    | 'file'
+
+
 export const mappingRequestMethods: MappingRequestMethod[] = [
     'GET',
     'POST',
@@ -122,7 +130,7 @@ export interface IMapping {
     isCreated?: boolean
     metadata?: {
         folder?: string
-        responseType?: 'text' | 'image' | 'json' | 'video' | 'file'
+        responseType?: MappingResponseType
     }
 }
 
@@ -166,7 +174,7 @@ export interface IMappingFormValues {
     responseHeaders: IMappingResponseHeaderFormValue[]
     responseBody?: string
     responseBase64Body?: string
-    responseType: 'text' | 'image' | 'json' | 'video' | 'file'
+    responseType: MappingResponseType
     responseBodyFileName?: string
     responseDelayMilliseconds?: number
     responseDelayDistribution?:

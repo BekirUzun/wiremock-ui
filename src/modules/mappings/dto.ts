@@ -9,6 +9,7 @@ import {
     IMappingResponseHeaderFormValue,
     mappingRequestParamMatchTypes,
     mappingRequestBodyPatternMatchTypes,
+    MappingResponseType,
 } from './types'
 
 export const mappingRequestParamsToFormValue = (params?: IMappingRequestParams): IMappingRequestParamFormValue[] => {
@@ -107,7 +108,7 @@ export const mappingToFormValues = (mapping: IMapping): IMappingFormValues => {
     }
 }
 
-const mapResponseType = (mapping: IMapping): 'text' | 'image' | 'json' | 'video' | 'file' => {
+const mapResponseType = (mapping: IMapping): MappingResponseType => {
     if (mapping.metadata && mapping.metadata.responseType) { 
         return mapping.metadata.responseType
     }
@@ -115,7 +116,7 @@ const mapResponseType = (mapping: IMapping): 'text' | 'image' | 'json' | 'video'
     // fallback to content-type header
     const contentType = getResponseHeader(mapping, 'content-type')
     if (!contentType) {
-        return mapping.response.base64Body !== undefined ? 'image' : 'text'
+        return mapping.response.base64Body !== undefined ? 'image' : 'json'
     }
     if (contentType.includes('image')) {
         return 'image'
@@ -123,7 +124,7 @@ const mapResponseType = (mapping: IMapping): 'text' | 'image' | 'json' | 'video'
     if (contentType.includes('json')) {
         return 'json'
     }
-    return 'text'
+    return 'json'
 }
 
 const getResponseHeader = (mapping: IMapping, header: string): string | undefined => {
