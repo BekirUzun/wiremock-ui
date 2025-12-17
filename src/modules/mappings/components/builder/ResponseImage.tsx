@@ -138,7 +138,6 @@ export default class ResponseImage extends React.Component<IResponseImageProps> 
                         onChange={this.handleFileUpload}
                     />
                 </FileInputWrapper>
-                {values.responseBase64Body ? (
                     <ImagePreviewContainer>
                         <Textarea
                             id="responseBase64Body"
@@ -154,28 +153,15 @@ export default class ResponseImage extends React.Component<IResponseImageProps> 
                             }}
                         />
                         <ImagePreview>
+                        {values.responseBase64Body && (
                             <ImagePreviewImg
                                 src={`data:${this.getContentType()};base64,${values.responseBase64Body}`}
                                 alt="Image preview"
                             />
+                        )}
                         </ImagePreview>
                     </ImagePreviewContainer>
-                ) : (
-                    <Textarea
-                        id="responseBase64Body"
-                        name="responseBase64Body"
-                        value={values.responseBase64Body || ''}
-                        onChange={onChange}
-                        onBlur={onBlur}
-                        placeholder="Base64 encoded image data"
-                        style={{
-                            gridColumnStart: 1,
-                            gridColumnEnd: 9,
-                            minHeight: '120px',
-                            resize: 'vertical'
-                        }}
-                    />
-                )}
+
                 {errors.responseBase64Body && touched.responseBase64Body && (
                     <div style={{ color: 'red', gridColumnStart: 1, gridColumnEnd: 9 }}>
                         {errors.responseBase64Body}

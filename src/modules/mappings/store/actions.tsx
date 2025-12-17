@@ -282,6 +282,7 @@ export const initCreateMapping = (
             response: {
                 status: 200,
             },
+            isCreated: false,
         }
     }
 )

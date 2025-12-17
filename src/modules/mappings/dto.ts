@@ -56,7 +56,8 @@ export const mappingRequestBodyPatternsToFormValue = (bodyPatterns?: IMappingReq
 
 export const mappingToFormValues = (mapping: IMapping): IMappingFormValues => {
     let url = ''
-    let urlMatchType: MappingRequestUrlMatchType = 'anyUrl'
+    let urlMatchType: MappingRequestUrlMatchType = mapping.isCreated === false ? 'url' : 'anyUrl'
+
     if (mapping.request.url !== undefined) {
         url = mapping.request.url
         urlMatchType = 'url'
@@ -81,8 +82,6 @@ export const mappingToFormValues = (mapping: IMapping): IMappingFormValues => {
         })
     }
 
-    const responseType: 'text' | 'image' = mapping.response.base64Body !== undefined ? 'image' : 'text'
-
     return {
         id: mapping.id,
         uuid: mapping.uuid,
@@ -100,12 +99,38 @@ export const mappingToFormValues = (mapping: IMapping): IMappingFormValues => {
         responseHeaders,
         responseBody: mapping.response.body,
         responseBase64Body: mapping.response.base64Body,
-        responseType,
+        responseType: mapResponseType(mapping),
         responseBodyFileName: mapping.response.bodyFileName,
         responseDelayMilliseconds: mapping.response.fixedDelayMilliseconds,
         responseDelayDistribution: mapping.response.delayDistribution,
-        folder: mapping.metadata && mapping.metadata.folder ? mapping.metadata.folder : undefined,
+        folder: mapping.metadata ? mapping.metadata.folder : undefined,
     }
+}
+
+const mapResponseType = (mapping: IMapping): 'text' | 'image' | 'json' | 'video' | 'file' => {
+    if (mapping.metadata && mapping.metadata.responseType) { 
+        return mapping.metadata.responseType
+    }
+
+    // fallback to content-type header
+    const contentType = getResponseHeader(mapping, 'content-type')
+    if (!contentType) {
+        return mapping.response.base64Body !== undefined ? 'image' : 'text'
+    }
+    if (contentType.includes('image')) {
+        return 'image'
+    }
+    if (contentType.includes('json')) {
+        return 'json'
+    }
+    return 'text'
+}
+
+const getResponseHeader = (mapping: IMapping, header: string): string | undefined => {
+    if (mapping.response.headers && mapping.response.headers[header]) {
+        return mapping.response.headers[header]
+    }
+    return undefined
 }
 
 export const mappingRequestParamsFormValueToRequestParams = (params: IMappingRequestParamFormValue[]): IMappingRequestParams => {
@@ -183,11 +208,10 @@ export const mappingFormValuesToMapping = (formValues: IMappingFormValues): IMap
             fixedDelayMilliseconds: formValues.responseDelayMilliseconds,
             delayDistribution: formValues.responseDelayDistribution,
         },
-        ...(formValues.folder ? {
-            metadata: {
-                folder: formValues.folder,
-            }
-        } : {}),
+        metadata: {
+            folder: formValues.folder !== '' ? formValues.folder : undefined,
+            responseType: formValues.responseType,
+        }
     }
 
     return mapping

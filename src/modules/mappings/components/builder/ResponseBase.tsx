@@ -1,9 +1,11 @@
 import * as React from 'react'
 import { Trash2, PlusCircle } from 'react-feather'
 import { FieldArray, FormikErrors, FormikTouched, getIn } from 'formik'
-import { Button, Input, Textarea, Select } from 'edikit'
+import { Button, Input, Select } from 'edikit'
 import { IMappingFormValues } from '../../types'
-import ResponseImage from './ResponseImage'
+import ResponseTextBody from './ResponseTextBody'
+import ResponseImageBody from './ResponseImageBody'
+import ResponseJsonBody from './ResponseJsonBody'
 
 interface IResponseBaseProps {
     values: IMappingFormValues
@@ -26,7 +28,6 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
         } = this.props
 
         const responseType = values.responseType || 'text'
-        const isImageMode = responseType === 'image'
 
         return (
             <FieldArray
@@ -34,27 +35,9 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                 render={helpers => {
                     return (
                         <React.Fragment>
-                            <Button
-                                variant="default"
-                                icon={<PlusCircle size={14}/>}
-                                iconPlacement="append"
-                                style={{
-                                    height: '30px',
-                                    gridColumnStart: 1,
-                                    gridColumnEnd: 3,
-                                }}
-                                onClick={() => {
-                                    helpers.push({ key: '', value: '' })
-                                    sync()
-                                }}
-                            >
-                                Header
-                            </Button>
+
                             <label
                                 htmlFor="responseStatus"
-                                style={{
-                                    gridColumnStart: 4
-                                }}
                             >
                                 Status
                             </label>
@@ -68,7 +51,7 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                             <label
                                 htmlFor="responseType"
                                 style={{
-                                    gridColumnStart: 7,
+                                    gridColumnStart: 4,
                                 }}
                             >
                                 Response Type
@@ -81,6 +64,7 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                                 onBlur={onBlur}
                             >
                                 <option value="text">Text</option>
+                                <option value="json">JSON</option>
                                 <option value="image">Image</option>
                             </Select>
                             {errors.responseStatus && touched.responseStatus && (
@@ -88,6 +72,23 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                                     {errors.responseStatus}
                                 </div>
                             )}
+
+                            <Button
+                                variant="primary"
+                                icon={<PlusCircle size={14}/>}
+                                iconPlacement="append"
+                                style={{
+                                    height: '30px',
+                                    gridColumnStart: 1,
+                                    gridColumnEnd: 3,
+                                }}
+                                onClick={() => {
+                                    helpers.push({ key: '', value: '' })
+                                    sync()
+                                }}
+                            >
+                                Add header
+                            </Button>
                             {values.responseHeaders && values.responseHeaders.length > 0 && values.responseHeaders.map((header, index) => (
                                 <React.Fragment key={index}>
                                     <Input
@@ -137,18 +138,8 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                                     )}
                                 </React.Fragment>
                             ))}
-                            <label
-                                htmlFor={isImageMode ? "responseBase64Body" : "responseBody"}
-                                style={{
-                                    gridColumnStart: 1,
-                                    gridColumnEnd: 9,
-                                    marginTop: '6px'
-                                }}
-                            >
-                                {isImageMode ? 'Image Body (Base64)' : 'Body'}
-                            </label>
-                            {isImageMode ? (
-                                <ResponseImage
+                            {responseType === 'image' && (
+                                <ResponseImageBody
                                     values={values}
                                     errors={errors}
                                     touched={touched}
@@ -156,28 +147,28 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                                     onBlur={onBlur}
                                     sync={sync}
                                 />
-                            ) : (
-                                <>
-                                    <Textarea
-                                        id="responseBody"
-                                        name="responseBody"
-                                        value={values.responseBody || ''}
-                                        onChange={onChange}
-                                        onBlur={onBlur}
-                                        placeholder="Response body"
-                                        style={{
-                                            gridColumnStart: 1,
-                                            gridColumnEnd: 9,
-                                            minHeight: '120px',
-                                            resize: 'vertical'
-                                        }}
-                                    />
-                                    {errors.responseBody && touched.responseBody && (
-                                        <div style={{ color: 'red', gridColumnStart: 1, gridColumnEnd: 9 }}>
-                                            {errors.responseBody}
-                                        </div>
-                                    )}
-                                </>
+                            )}
+
+                            {responseType === 'text' && (
+                                <ResponseTextBody
+                                    values={values}
+                                    errors={errors}
+                                    touched={touched}
+                                    onChange={onChange}
+                                    onBlur={onBlur}
+                                    sync={sync}
+                                />
+                            )}
+
+                            {responseType === 'json' && (
+                                <ResponseJsonBody
+                                    values={values}
+                                    errors={errors}
+                                    touched={touched}
+                                    onChange={onChange}
+                                    onBlur={onBlur}
+                                    sync={sync}
+                                />
                             )}
                         </React.Fragment>
                     )

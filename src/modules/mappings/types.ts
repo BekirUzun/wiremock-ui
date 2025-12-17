@@ -119,8 +119,10 @@ export interface IMapping {
     priority?: number
     request: IMappingRequest
     response: IMappingResponse
+    isCreated?: boolean
     metadata?: {
         folder?: string
+        responseType?: 'text' | 'image' | 'json' | 'video' | 'file'
     }
 }
 
@@ -164,7 +166,7 @@ export interface IMappingFormValues {
     responseHeaders: IMappingResponseHeaderFormValue[]
     responseBody?: string
     responseBase64Body?: string
-    responseType?: 'text' | 'image'
+    responseType: 'text' | 'image' | 'json' | 'video' | 'file'
     responseBodyFileName?: string
     responseDelayMilliseconds?: number
     responseDelayDistribution?:
