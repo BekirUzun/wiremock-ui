@@ -172,6 +172,7 @@ export interface IThemeNotifications {
 
 export interface IThemeEditor {
     theme: string
+    css?: string
 }
 
 export interface ITheme {

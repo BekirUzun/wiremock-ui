@@ -88,7 +88,7 @@ const theme: ITheme = {
         block: {
             background: '#252526',
             css: css`
-                box-shadow: 0 1px 2px rgba(0,0,0,.6);
+                box-shadow: 0 2px 4px rgba(0,0,0,.6);
                 border: 1px solid ${colors.border};
             `,
             title: {
@@ -133,6 +133,35 @@ const theme: ITheme = {
     },
     editor: {
         theme: 'monokai',
+        css: `
+            .ace_editor {
+                background-color: #202020 !important;
+            }
+
+            .ace_active-line {
+                background: #2d2f30 !important;
+            }
+
+            .ace_gutter {
+                background: #181818 !important;
+            }
+
+            .ace_variable {
+                color: #9cdcfe !important;
+            }
+
+            .ace_boolean {
+                color: #4c89be !important;
+            }
+
+            .ace_numeric {
+                color: #b5cea8 !important;
+            }
+
+            .ace_string {
+                color: #ce9178 !important;
+            }
+        `,
     },
     form: {
         input: {

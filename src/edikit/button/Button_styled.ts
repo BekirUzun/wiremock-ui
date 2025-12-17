@@ -14,7 +14,19 @@ export const Container = styled.span<IContainerProps>`
     white-space: nowrap;
     user-select: none;
     cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
-    border: 1px solid transparent;
+    border: 1px solid ${props => {
+        if (props.variant === 'success') {
+            return props.theme.colors.success
+        }
+        if (props.variant === 'warning') {
+            return props.theme.colors.warning
+        }
+        if (props.variant === 'danger') {
+            return props.theme.colors.danger
+        }
+
+        return props.theme.colors.accent
+    }};
     border-radius: 2px;
     font-weight: 500;
     transition: background 200ms;

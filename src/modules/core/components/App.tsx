@@ -8,6 +8,7 @@ import { serversContentTypes } from '../../servers'
 import { mappingsContentTypes } from '../../mappings'
 import ExplorerContainer from '../containers/ExplorerContainer'
 import AppBar from './AppBar'
+import ThemeStyleInjector from './ThemeStyleInjector'
 import { Container, Inner } from './App_styled'
 import { IApplicationState } from '../../../store'
 import { IData } from '../../../types'
@@ -44,20 +45,21 @@ export default class App extends React.Component<IAppProps> {
 
         return (
             <ThemeProvider theme={themes[settings.theme]}>
-                <Container>
-                    <AppBar
-                        addContentToCurrentPane={addContentToCurrentPane}
-                    />
-                    <Inner>
-                        <SplitPane split="vertical" defaultSize={260}>
-                            <ExplorerContainer
-                                addContentToCurrentPane={addContentToCurrentPane}
-                            />
-                            <PaneManager/>
-                        </SplitPane>
-                    </Inner>
-                    <NotificationsContainer/>
-                </Container>
+                    <Container>
+                    <ThemeStyleInjector theme={themes[settings.theme]} />
+                        <AppBar
+                            addContentToCurrentPane={addContentToCurrentPane}
+                        />
+                        <Inner>
+                            <SplitPane split="vertical" defaultSize={260}>
+                                <ExplorerContainer
+                                    addContentToCurrentPane={addContentToCurrentPane}
+                                />
+                                <PaneManager />
+                            </SplitPane>
+                        </Inner>
+                        <NotificationsContainer />
+                    </Container>
             </ThemeProvider>
         )
     }

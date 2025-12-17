@@ -81,7 +81,7 @@ const theme: ITheme = {
         block: {
             background: '#013340',
             css: css`
-                box-shadow: 0 1px 2px #001b21;
+                box-shadow: 0 2px 4px #001b21;
             `,
             title: {
 

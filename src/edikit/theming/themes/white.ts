@@ -83,7 +83,7 @@ const theme: ITheme = {
         block: {
             background: '#fff',
             css: css`
-                box-shadow: 0 1px 3px rgba(0, 0, 0, .1);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
             `,
             title: {
             }
@@ -131,7 +131,7 @@ const theme: ITheme = {
     form: {
         input: {
             background: '#f5f5f5',
-            border: '1px solid #eee',
+            border: '1px solid #bbb',
             color: colors.text,
             css: css`
                 border-radius: 2px;
@@ -155,7 +155,7 @@ const theme: ITheme = {
             background: 'white',
             arrowsColor: '#2b5fc5',
             addonBackground: 'rgba(4, 169, 244, .08)',
-            borderColor: '#ddd',
+            borderColor: '#aaa',
             color: '#222',
             css: css`
                 box-shadow: 0 1px 1px rgba(0, 0, 0, .06);
