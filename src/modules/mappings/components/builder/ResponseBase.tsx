@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Trash2, PlusCircle } from 'react-feather'
 import { FieldArray, FormikErrors, FormikTouched, getIn } from 'formik'
 import { Button, Input, Select } from 'edikit'
-import { IMappingFormValues } from '../../types'
+import { IMappingFormValues, MappingResponseType } from '../../types'
 import ResponseTextBody from './ResponseTextBody'
 import ResponseImageBody from './ResponseImageBody'
 import ResponseJsonBody from './ResponseJsonBody'
@@ -17,6 +17,62 @@ interface IResponseBaseProps {
 }
 
 export default class ResponseBase extends React.Component<IResponseBaseProps> {
+    getContentTypeForResponseType = (responseType: MappingResponseType): string => {
+        switch (responseType) {
+            case 'text':
+                return 'text/plain'
+            case 'json':
+                return 'application/json'
+            case 'image':
+                return 'image/png'
+            case 'video':
+                return 'video/mp4'
+            case 'file':
+                return 'application/octet-stream'
+            default:
+                return ''
+        }
+    }
+
+    handleResponseTypeChange = (e: React.ChangeEvent<HTMLSelectElement>, helpers: any) => {
+        const { onChange, values } = this.props
+        const newResponseType = e.target.value as MappingResponseType
+        onChange(e)
+        
+        const contentType = this.getContentTypeForResponseType(newResponseType)
+        if (!contentType) {
+            return
+        }
+
+        const contentTypeIndex = values.responseHeaders.findIndex(
+            header => header.key.toLowerCase() === 'content-type'
+        )
+        
+        if (contentTypeIndex >= 0) {
+            const updatedHeaders = [...values.responseHeaders]
+            updatedHeaders[contentTypeIndex] = {
+                ...updatedHeaders[contentTypeIndex],
+                value: contentType
+            }
+            const headersEvent = {
+                target: {
+                    name: 'responseHeaders',
+                    value: updatedHeaders,
+                }
+            } as any
+            onChange(headersEvent)
+        } else {
+            helpers.push({ key: 'Content-Type', value: contentType })
+        }
+
+        const contentDispositionIndex = values.responseHeaders.findIndex(
+            header => header.key.toLowerCase() === 'content-disposition'
+        )
+        if (newResponseType === 'image' && contentDispositionIndex === -1) {
+            helpers.push({ key: 'Content-Disposition', value: 'inline; filename="image.png"' })
+        }
+    }
+
     render() {
         const {
             values,
@@ -26,8 +82,6 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
             onBlur,
             sync,
         } = this.props
-
-        const responseType = values.responseType || 'text'
 
         return (
             <FieldArray
@@ -59,8 +113,8 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                             <Select
                                 id="responseType"
                                 name="responseType"
-                                value={responseType}
-                                onChange={onChange}
+                                value={values.responseType}
+                                onChange={(e) => this.handleResponseTypeChange(e, helpers)}
                                 onBlur={onBlur}
                             >
                                 <option value="text">Text</option>
@@ -138,7 +192,7 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                                     )}
                                 </React.Fragment>
                             ))}
-                            {responseType === 'image' && (
+                            {values.responseType === 'image' && (
                                 <ResponseImageBody
                                     values={values}
                                     errors={errors}
@@ -149,7 +203,7 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                                 />
                             )}
 
-                            {responseType === 'text' && (
+                            {values.responseType === 'text' && (
                                 <ResponseTextBody
                                     values={values}
                                     errors={errors}
@@ -160,7 +214,7 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                                 />
                             )}
 
-                            {responseType === 'json' && (
+                            {values.responseType === 'json' && (
                                 <ResponseJsonBody
                                     values={values}
                                     errors={errors}

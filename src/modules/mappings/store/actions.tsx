@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { action } from 'typesafe-actions'
 import { IServer } from '../../servers'
-import { IMapping } from '../types'
+import { IMapping, MappingResponseType } from '../types'
 import { getMappingLabel } from '../dto'
 import { MappingsActionTypes } from './types'
 
@@ -281,6 +281,12 @@ export const initCreateMapping = (
             },
             response: {
                 status: 200,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            },
+            metadata: {
+                responseType: "json" as MappingResponseType
             },
             isCreated: false,
         }
