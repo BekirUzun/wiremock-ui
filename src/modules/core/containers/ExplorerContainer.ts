@@ -124,11 +124,15 @@ const mapStateToProps = (
         tree.children!.push(serverNode)
     })
 
-    tree.children!.push({
-        id: 'server.create',
-        type: 'server.create',
-        label: 'create server',
-    })
+    const isServerCreationDisabled = process.env.REACT_APP_SERVER_CREATION_DISABLED === 'true'
+
+    if (!isServerCreationDisabled) {
+        tree.children!.push({
+            id: 'server.create',
+            type: 'server.create',
+            label: 'create server',
+        })
+    }
 
     return { tree, servers, serversMappings }
 }

@@ -36,6 +36,7 @@
   },
   "scripts": {
     "start": "react-scripts-ts start",
+    "start:prod": "yarn build && npx serve -s build",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
