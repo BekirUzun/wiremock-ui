@@ -40,10 +40,7 @@ export default class RequestUrlDetails extends React.Component<IRequestUrlDetail
                 </Select>
                 <label
                     htmlFor="urlMatchType"
-                    style={{
-                        gridColumnStart: 4,
-                        gridColumnEnd: 6,
-                    }}
+                    style={{ gridColumnStart: 4 }}
                 >
                     URL match type
                 </label>
@@ -52,10 +49,7 @@ export default class RequestUrlDetails extends React.Component<IRequestUrlDetail
                     value={values.urlMatchType}
                     onChange={onChange}
                     onBlur={onBlur}
-                    style={{
-                        gridColumnStart: 6,
-                        gridColumnEnd: 9,
-                    }}
+                    style={{ gridColumnStart: 5 }}
                 >
                     <option value="url">Path and query</option>
                     <option value="urlPattern">Path and query regex</option>

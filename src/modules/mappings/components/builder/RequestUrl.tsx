@@ -12,12 +12,26 @@ interface IRequetsUrlProps {
 }
 
 export default class RequestUrl extends React.Component<IRequetsUrlProps> {
+    handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value
+        if (value && !value.startsWith('/')) {
+            value = '/' + value
+        }
+        if (value === '') {
+            value = '/'
+        }
+        e.target.value = value
+        this.props.onChange(e)
+    }
+
     render() {
         const {
             values,
             onChange,
             onBlur,
         } = this.props
+
+        const urlValue = values.url && values.url.startsWith('/') ? values.url : '/'
 
         return (
             <React.Fragment>
@@ -33,8 +47,8 @@ export default class RequestUrl extends React.Component<IRequetsUrlProps> {
                 </Select>
                 <Input
                     name="url"
-                    value={values.url}
-                    onChange={onChange}
+                    value={urlValue}
+                    onChange={this.handleUrlChange}
                     onBlur={onBlur}
                     style={{
                         gridColumnStart: 2,

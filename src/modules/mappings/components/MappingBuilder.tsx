@@ -173,17 +173,14 @@ class MappingBuilder extends React.Component<
                                     id="folder-select"
                                     value={values.folder && this.getExistingFolders().includes(values.folder) ? values.folder : ''}
                                     onChange={this.handleFolderSelectChange}
-                                    style={{
-                                        gridColumnStart: 2,
-                                        gridColumnEnd: 4,
-                                    }}
+                                    style={{ gridColumnStart: 2}}
                                 >
                                     <option value="">No folder</option>
                                     {this.getExistingFolders().map(folder => (
                                         <option key={folder} value={folder}>{folder}</option>
                                     ))}
                                 </Select>
-                                <label htmlFor="folder" style={{ gridColumnStart: 5 }}>
+                                <label htmlFor="folder" style={{ gridColumnStart: 4 }}>
                                     Create Folder
                                 </label>
                                 <Input
@@ -192,10 +189,7 @@ class MappingBuilder extends React.Component<
                                     value={this.state.newFolderInput}
                                     onChange={this.handleNewFolderInputChange}
                                     onBlur={this.handleBlur}
-                                    style={{
-                                        gridColumnStart: 6,
-                                        gridColumnEnd: 9,
-                                    }}
+                                    style={{ gridColumnStart: 5 }}
                                 />
                             </Grid>
                         </Block>

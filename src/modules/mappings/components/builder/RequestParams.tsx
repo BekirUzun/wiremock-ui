@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Trash2 } from 'react-feather'
+import { Trash2, PlusCircle } from 'react-feather'
 import {FormikErrors, FormikTouched, FieldArray, getIn} from 'formik'
 import { Button, Input, Select } from 'edikit'
 import { IMappingFormValues, mappingRequestParamMatchTypes } from '../../types'
@@ -93,6 +93,8 @@ export default class RequestParams extends React.Component<IRequestParamsProps> 
                         ))}
                         <Button
                             variant="primary"
+                            icon={<PlusCircle size={14}/>}
+                            iconPlacement="append"
                             onClick={() => {
                                 arrayHelpers.push({
                                     key: '',
