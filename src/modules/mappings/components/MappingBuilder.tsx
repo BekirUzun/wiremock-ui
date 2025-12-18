@@ -3,6 +3,7 @@ import { InjectedFormikProps, withFormik } from 'formik'
 import { Builder, Block, Input, Select } from 'edikit'
 import { IMapping, IMappingFormValues } from '../types'
 import { IServerMappingsState } from '../store'
+import { IServer } from '../../servers'
 import { mappingValidationSchema } from '../validation'
 import { mappingToFormValues, mappingFormValuesToMapping } from '../dto'
 import { Container, Content } from './Mapping_styled'
@@ -22,6 +23,7 @@ interface IMappingBuilderProps {
     setJsonMode(): void
     setCurlMode?: () =>void
     serverMappings?: IServerMappingsState
+    server?: IServer
 }
 
 interface IMappingBuilderState {
@@ -206,6 +208,7 @@ class MappingBuilder extends React.Component<
                             onBlur={this.handleBlur}
                             paramsType={requestParamsType}
                             updateParamsType={this.updateRequestParamsType}
+                            server={this.props.server}
                         />
                         <BuilderResponse
                             isOpened={isResponseOpened}

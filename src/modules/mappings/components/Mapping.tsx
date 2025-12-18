@@ -83,6 +83,7 @@ export default class Mapping extends React.Component<IMappingProps, IMappingStat
                         setJsonMode={this.setJsonMode}
                         setCurlMode={this.setCurlMode}
                         serverMappings={serverMappings}
+                        server={this.props.server}
                     />
                 )}
                 {mode === 'json' && (

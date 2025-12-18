@@ -3,6 +3,7 @@ import { FormikErrors, FormikTouched } from 'formik'
 import { Input, Select, Button } from 'edikit'
 import { ExternalLink } from 'react-feather'
 import { IMappingFormValues, mappingRequestMethods } from '../../types'
+import { IServer } from '../../../servers'
 
 interface IRequetsUrlProps {
     values: IMappingFormValues
@@ -10,6 +11,7 @@ interface IRequetsUrlProps {
     touched: FormikTouched<IMappingFormValues>
     onChange(e: React.ChangeEvent<any>): void
     onBlur(e: any): void
+    server?: IServer
 }
 
 export default class RequestUrl extends React.Component<IRequetsUrlProps> {
@@ -29,7 +31,17 @@ export default class RequestUrl extends React.Component<IRequetsUrlProps> {
         const urlValue = this.props.values.url && this.props.values.url.startsWith('/') 
             ? this.props.values.url 
             : '/'
-        const fullUrl = `${window.location.protocol}//${window.location.host}${urlValue}`
+        
+        let baseUrl: string
+        if (this.props.server) {
+            baseUrl = this.props.server.port 
+                ? `${this.props.server.url}:${this.props.server.port}` 
+                : this.props.server.url
+        } else {
+            baseUrl = `${window.location.protocol}//${window.location.host}`
+        }
+        
+        const fullUrl = `${baseUrl}${urlValue}`
         window.open(fullUrl, '_blank')
     }
 

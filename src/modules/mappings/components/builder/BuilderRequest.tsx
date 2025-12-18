@@ -2,6 +2,7 @@ import * as React from 'react'
 import { FormikErrors, FormikTouched } from 'formik'
 import { Block } from 'edikit'
 import { IMappingFormValues } from '../../types'
+import { IServer } from '../../../servers'
 import BuilderSectionLabel from './BuilderSectionLabel'
 import RequestUrl from './RequestUrl'
 import RequestUrlDetails from './RequestUrlDetails'
@@ -20,6 +21,7 @@ interface IBuilderRequestProps {
     onChange(e: React.ChangeEvent<any>): void
     onBlur(e: any): void
     updateParamsType(paramsType: 'query' | 'headers' | 'cookies' | 'body'): void
+    server?: IServer
 }
 
 export default class BuilderRequest extends React.Component<IBuilderRequestProps> {
@@ -52,6 +54,7 @@ export default class BuilderRequest extends React.Component<IBuilderRequestProps
                                 touched={touched}
                                 onChange={onChange}
                                 onBlur={onBlur}
+                                server={this.props.server}
                             />
                             <RequestUrlDetails
                                 values={values}

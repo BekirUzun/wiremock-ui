@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { IMapping } from '../types'
 import { IServerMappingsState } from '../store'
+import { IServer } from '../../servers'
 import MappingJsonEditor from './MappingJsonEditor'
 import MappingBuilder from './MappingBuilder'
 import { Wrapper, Overlay } from './Mapping_styled'
@@ -11,6 +12,7 @@ interface ICreateMappingProps {
     mapping?: IMapping
     isCreating: boolean
     serverMappings?: IServerMappingsState
+    server?: IServer
     init(): void
     save(mapping: IMapping): void
     cancel(): void
@@ -48,6 +50,7 @@ export default class CreateMapping extends React.Component<ICreateMappingProps, 
             isCreating,
             save,
             serverMappings,
+            server,
         } = this.props
 
         if (mapping === undefined) return null
@@ -65,6 +68,7 @@ export default class CreateMapping extends React.Component<ICreateMappingProps, 
                         setBuilderMode={this.setBuilderMode}
                         setJsonMode={this.setJsonMode}
                         serverMappings={serverMappings}
+                        server={server}
                     />
                 )}
                 {mode === 'json' && (
