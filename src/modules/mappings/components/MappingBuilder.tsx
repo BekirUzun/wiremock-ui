@@ -163,7 +163,7 @@ class MappingBuilder extends React.Component<
                                     onBlur={this.handleBlur}
                                     style={{
                                         gridColumnStart: 2,
-                                        gridColumnEnd: 9,
+                                        gridColumnEnd: 8,
                                     }}
                                 />
                                 <label htmlFor="folder-select" style={{ gridColumnStart: 1 }}>

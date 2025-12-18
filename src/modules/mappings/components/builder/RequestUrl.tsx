@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { FormikErrors, FormikTouched } from 'formik'
-import { Input, Select } from 'edikit'
+import { Input, Select, Button } from 'edikit'
+import { ExternalLink } from 'react-feather'
 import { IMappingFormValues, mappingRequestMethods } from '../../types'
 
 interface IRequetsUrlProps {
@@ -22,6 +23,14 @@ export default class RequestUrl extends React.Component<IRequetsUrlProps> {
         }
         e.target.value = value
         this.props.onChange(e)
+    }
+
+    handleOpenUrl = () => {
+        const urlValue = this.props.values.url && this.props.values.url.startsWith('/') 
+            ? this.props.values.url 
+            : '/'
+        const fullUrl = `${window.location.protocol}//${window.location.host}${urlValue}`
+        window.open(fullUrl, '_blank')
     }
 
     render() {
@@ -52,7 +61,21 @@ export default class RequestUrl extends React.Component<IRequetsUrlProps> {
                     onBlur={onBlur}
                     style={{
                         gridColumnStart: 2,
+                        gridColumnEnd: 8,
+                    }}
+                />
+                <Button
+                    onClick={this.handleOpenUrl}
+                    variant="default"
+                    size="normal"
+                    icon={<ExternalLink size={14} />}
+                    style={{
+                        gridColumnStart: 8,
                         gridColumnEnd: 9,
+                        height: '32px',
+                        width: '32px',
+                        padding: 0,
+                        justifyContent: 'center',
                     }}
                 />
             </React.Fragment>
