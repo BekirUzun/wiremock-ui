@@ -13,9 +13,10 @@ interface IMappingJsonEditorProps {
     save(values: IMapping): void
     sync?: (values: IMapping) => void
     deleteMapping?: () => void
-    mode: 'builder' | 'json'
+    mode: 'builder' | 'json' | 'curl'
     setBuilderMode(): void
     setJsonMode(): void
+    setCurlMode?: () => void
     theme: ITheme
 }
 
@@ -115,6 +116,7 @@ class MappingJsonEditor extends React.Component<IMappingJsonEditorProps, IMappin
             mode,
             setBuilderMode,
             setJsonMode,
+            setCurlMode,
             deleteMapping,
             theme,
         } = this.props
@@ -127,6 +129,7 @@ class MappingJsonEditor extends React.Component<IMappingJsonEditorProps, IMappin
                     mode={mode}
                     setBuilderMode={setBuilderMode}
                     setJsonMode={setJsonMode}
+                    setCurlMode={setCurlMode}
                     deleteMapping={deleteMapping}
                     save={this.handleSave}
                     saveDisabled={!!error}

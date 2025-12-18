@@ -4,6 +4,7 @@ import { IMapping } from '../types'
 import { IServerMappingsState } from '../store'
 import MappingJsonEditor from './MappingJsonEditor'
 import MappingBuilder from './MappingBuilder'
+import MappingCurlEditor from './MappingCurlEditor'
 import { Wrapper, Overlay } from './Mapping_styled'
 
 interface IMappingProps {
@@ -21,7 +22,7 @@ interface IMappingProps {
 }
 
 interface IMappingState {
-    mode: 'builder' | 'json'
+    mode: 'builder' | 'json' | 'curl'
 }
 
 export default class Mapping extends React.Component<IMappingProps, IMappingState> {
@@ -51,6 +52,10 @@ export default class Mapping extends React.Component<IMappingProps, IMappingStat
         this.setState({ mode: 'json' })
     }
 
+    setCurlMode = () => {
+        this.setState({ mode: 'curl' })
+    }
+
     render() {
         const {
             mapping,
@@ -76,6 +81,7 @@ export default class Mapping extends React.Component<IMappingProps, IMappingStat
                         mode={mode}
                         setBuilderMode={this.setBuilderMode}
                         setJsonMode={this.setJsonMode}
+                        setCurlMode={this.setCurlMode}
                         serverMappings={serverMappings}
                     />
                 )}
@@ -89,6 +95,19 @@ export default class Mapping extends React.Component<IMappingProps, IMappingStat
                         mode={mode}
                         setBuilderMode={this.setBuilderMode}
                         setJsonMode={this.setJsonMode}
+                        setCurlMode={this.setCurlMode}
+                    />
+                )}
+                {mode === 'curl' && (
+                    <MappingCurlEditor
+                        mapping={mapping}
+                        server={this.props.server}
+                        isLoading={isLoading}
+                        deleteMapping={deleteMapping}
+                        mode={mode}
+                        setBuilderMode={this.setBuilderMode}
+                        setJsonMode={this.setJsonMode}
+                        setCurlMode={this.setCurlMode}
                     />
                 )}
                 {isLoading && <Overlay/>}

@@ -7,6 +7,7 @@ import {
     Grid as BuilderModeIcon,
     Trash2 as DeleteIcon,
     Terminal as BeautifyIcon,
+    Terminal as CurlModeIcon,
     // AlertOctagon as HasErrorIcon,
     // X as CancelIcon,
     // Copy as CloneIcon,
@@ -37,9 +38,10 @@ const actionButtonStyle = {
 }
 
 interface IMappingBarProps {
-    mode: 'builder' | 'json'
+    mode: 'builder' | 'json' | 'curl'
     setBuilderMode(): void
     setJsonMode(): void
+    setCurlMode?: () => void
     save?: () => void
     saveDisabled?: boolean
     deleteMapping?: () => void
@@ -78,6 +80,7 @@ export default class MappingBar extends React.Component<IMappingBarProps, IMappi
             mode,
             setBuilderMode,
             setJsonMode,
+            setCurlMode,
             save,
             deleteMapping,
         } = this.props
@@ -111,6 +114,21 @@ export default class MappingBar extends React.Component<IMappingBarProps, IMappi
                         >
                             json
                         </Button>
+                        {setCurlMode !== undefined && (
+                            <Button
+                            onClick={setCurlMode}
+                            style={{
+                                marginLeft: '6px',
+                                paddingLeft: '6px',
+                                fontSize: '12px',
+                                lineHeight: '1.6em',
+                            }}
+                            variant={mode === 'curl' ? 'primary' : 'default'}
+                            icon={<CurlModeIcon size={14} style={{ marginRight: '9px' }}/>}
+                            >
+                                curl
+                            </Button>
+                        )}
                     </ButtonsWrapper>
                     <ButtonsWrapper>
                         {this.props.mode === 'json' && this.props.beautify !== undefined && (

@@ -17,9 +17,10 @@ interface IMappingBuilderProps {
     sync?: (values: IMapping) => void
     save(values: IMapping): void
     deleteMapping?: () => void
-    mode: 'builder' | 'json'
+    mode: 'builder' | 'json' | 'curl'
     setBuilderMode(): void
     setJsonMode(): void
+    setCurlMode?: () =>void
     serverMappings?: IServerMappingsState
 }
 
@@ -132,6 +133,7 @@ class MappingBuilder extends React.Component<
             mode,
             setBuilderMode,
             setJsonMode,
+            setCurlMode,
             submitForm,
         } = this.props
         const {
@@ -146,6 +148,7 @@ class MappingBuilder extends React.Component<
                     mode={mode}
                     setBuilderMode={setBuilderMode}
                     setJsonMode={setJsonMode}
+                    setCurlMode={setCurlMode}
                     save={submitForm}
                     deleteMapping={deleteMapping}
                 />
