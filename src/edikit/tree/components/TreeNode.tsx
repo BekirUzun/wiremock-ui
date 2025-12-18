@@ -4,6 +4,7 @@ import { Folder, ChevronRight, ChevronDown, MoreVertical } from 'react-feather'
 import { Icons, Item, CurrentIndicator, ActionsButton } from './TreeNode_styled'
 import { ITreeNode, TreeClickHandler, TreeIconGetter } from '../'
 import { ContextMenu } from './ContextMenu'
+import { ConfirmationModal } from '../../modal'
 
 const iconSize = 12
 
@@ -23,6 +24,7 @@ interface ITreeNodeState {
     contextMenuX: number
     contextMenuY: number
     isHovered: boolean
+    showDeleteModal: boolean
 }
 
 class TreeNode<NodeData> extends React.Component<ITreeNodeProps<NodeData>, ITreeNodeState> {
@@ -39,6 +41,7 @@ class TreeNode<NodeData> extends React.Component<ITreeNodeProps<NodeData>, ITree
             contextMenuX: 0,
             contextMenuY: 0,
             isHovered: false,
+            showDeleteModal: false,
         }
     }
 
@@ -89,10 +92,18 @@ class TreeNode<NodeData> extends React.Component<ITreeNodeProps<NodeData>, ITree
     }
 
     handleDelete = () => {
-        const { onDelete, node } = this.props
-        if (onDelete) {
-            onDelete(node)
+        this.setState({ showDeleteModal: true, showContextMenu: false })
+    }
+
+    handleDeleteConfirm = () => {
+        if (this.props.onDelete) {
+            this.props.onDelete(this.props.node)
         }
+        this.setState({ showDeleteModal: false })
+    }
+
+    handleDeleteCancel = () => {
+        this.setState({ showDeleteModal: false })
     }
 
     render() {
@@ -178,6 +189,16 @@ class TreeNode<NodeData> extends React.Component<ITreeNodeProps<NodeData>, ITree
                         items={contextMenuItems}
                     />
                 )}
+                <ConfirmationModal
+                    isOpen={this.state.showDeleteModal}
+                    title="Delete Mapping"
+                    content={`Are you sure you want to delete "${node.label}"? This action cannot be undone.`}
+                    confirmButtonText="Delete"
+                    cancelButtonText="Cancel"
+                    confirmButtonVariant="danger"
+                    onConfirm={this.handleDeleteConfirm}
+                    onCancel={this.handleDeleteCancel}
+                />
                 {node.children && node.children.length > 0 && isOpened && (
                     <React.Fragment>
                         {node.children.map(child => (

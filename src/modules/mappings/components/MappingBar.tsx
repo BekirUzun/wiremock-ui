@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button } from 'edikit'
+import { Button, ConfirmationModal } from 'edikit'
 import styled from 'styled-components'
 import {
     Save as SaveIcon,
@@ -46,7 +46,33 @@ interface IMappingBarProps {
     beautify?: () => void
 }
 
-export default class MappingBar extends React.Component<IMappingBarProps> {
+interface IMappingBarState {
+    isDeleteModalOpen: boolean
+}
+
+export default class MappingBar extends React.Component<IMappingBarProps, IMappingBarState> {
+    constructor(props: IMappingBarProps) {
+        super(props)
+        this.state = {
+            isDeleteModalOpen: false,
+        }
+    }
+
+    handleDeleteClick = () => {
+        this.setState({ isDeleteModalOpen: true })
+    }
+
+    handleDeleteConfirm = () => {
+        if (this.props.deleteMapping) {
+            this.props.deleteMapping()
+        }
+        this.setState({ isDeleteModalOpen: false })
+    }
+
+    handleDeleteCancel = () => {
+        this.setState({ isDeleteModalOpen: false })
+    }
+
     render() {
         const {
             mode,
@@ -57,74 +83,88 @@ export default class MappingBar extends React.Component<IMappingBarProps> {
         } = this.props
 
         return (
-            <Container>
-                <ButtonsWrapper>
-                    <Button
-                        onClick={setBuilderMode}
-                        style={{
-                            paddingLeft: '6px',
-                            fontSize: '12px',
-                            lineHeight: '1.6em',
-                        }}
-                        variant={mode === 'builder' ? 'primary' : 'default'}
-                        icon={<BuilderModeIcon size={14} style={{ marginRight: '9px' }}/>}
-                    >
-                        builder
-                    </Button>
-                    <Button
-                        onClick={setJsonMode}
-                        style={{
-                            marginLeft: '6px',
-                            paddingLeft: '6px',
-                            fontSize: '12px',
-                            lineHeight: '1.6em',
-                        }}
-                        variant={mode === 'json' ? 'primary' : 'default'}
-                        icon={<JsonModeIcon size={14} style={{ marginRight: '9px' }}/>}
-                    >
-                        json
-                    </Button>
-                </ButtonsWrapper>
-                <ButtonsWrapper>
-                    {this.props.mode === 'json' && this.props.beautify !== undefined && (
+            <>
+                <Container>
+                    <ButtonsWrapper>
                         <Button
-                            onClick={this.props.beautify}
-                            style={actionButtonStyle}
-                            variant="default"
-                            icon={<BeautifyIcon size={16}/>}
-                        />
-                    )}
-                    {save !== undefined && (
+                            onClick={setBuilderMode}
+                            style={{
+                                paddingLeft: '6px',
+                                fontSize: '12px',
+                                lineHeight: '1.6em',
+                            }}
+                            variant={mode === 'builder' ? 'primary' : 'default'}
+                            icon={<BuilderModeIcon size={14} style={{ marginRight: '9px' }}/>}
+                        >
+                            builder
+                        </Button>
                         <Button
-                            onClick={save}
-                            disabled={this.props.saveDisabled}
+                            onClick={setJsonMode}
+                            style={{
+                                marginLeft: '6px',
+                                paddingLeft: '6px',
+                                fontSize: '12px',
+                                lineHeight: '1.6em',
+                            }}
+                            variant={mode === 'json' ? 'primary' : 'default'}
+                            icon={<JsonModeIcon size={14} style={{ marginRight: '9px' }}/>}
+                        >
+                            json
+                        </Button>
+                    </ButtonsWrapper>
+                    <ButtonsWrapper>
+                        {this.props.mode === 'json' && this.props.beautify !== undefined && (
+                            <Button
+                                onClick={this.props.beautify}
+                                style={actionButtonStyle}
+                                variant="default"
+                                icon={<BeautifyIcon size={16}/>}
+                            />
+                        )}
+                        {save !== undefined && (
+                            <Button
+                                onClick={save}
+                                disabled={this.props.saveDisabled}
+                                style={actionButtonStyle}
+                                variant="primary"
+                                icon={<SaveIcon size={16}/>}
+                            />
+                        )}
+                        {deleteMapping !== undefined && (
+                            <Button
+                                onClick={this.handleDeleteClick}
+                                style={actionButtonStyle}
+                                variant="danger"
+                                icon={<DeleteIcon size={16}/>}
+                            />
+                        )}
+                        {/*
+                        <Button
                             style={actionButtonStyle}
                             variant="primary"
-                            icon={<SaveIcon size={16}/>}
+                            icon={<CloneIcon size={14}/>}
                         />
-                    )}
-                    {deleteMapping !== undefined && (
                         <Button
-                            onClick={deleteMapping}
                             style={actionButtonStyle}
-                            variant="danger"
-                            icon={<DeleteIcon size={16}/>}
+                            variant="warning"
+                            icon={<CancelIcon size={16}/>}
                         />
-                    )}
-                    {/*
-                    <Button
-                        style={actionButtonStyle}
-                        variant="primary"
-                        icon={<CloneIcon size={14}/>}
+                        */}
+                    </ButtonsWrapper>
+                </Container>
+                {deleteMapping !== undefined && (
+                    <ConfirmationModal
+                        isOpen={this.state.isDeleteModalOpen}
+                        title="Delete Mapping"
+                        content="Are you sure you want to delete this mapping? This action cannot be undone."
+                        confirmButtonText="Delete"
+                        cancelButtonText="Cancel"
+                        confirmButtonVariant="danger"
+                        onConfirm={this.handleDeleteConfirm}
+                        onCancel={this.handleDeleteCancel}
                     />
-                    <Button
-                        style={actionButtonStyle}
-                        variant="warning"
-                        icon={<CancelIcon size={16}/>}
-                    />
-                    */}
-                </ButtonsWrapper>
-            </Container>
+                )}
+            </>
         )
     }
 }
