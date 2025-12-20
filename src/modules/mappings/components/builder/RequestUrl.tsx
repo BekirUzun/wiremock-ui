@@ -28,9 +28,13 @@ export default class RequestUrl extends React.Component<IRequetsUrlProps> {
     }
 
     handleOpenUrl = () => {
-        const urlValue = this.props.values.url && this.props.values.url.startsWith('/') 
+        let urlValue = this.props.values.url && this.props.values.url.startsWith('/') 
             ? this.props.values.url 
             : '/'
+        
+        if (this.props.values.urlMatchType === 'urlPathTemplate') {
+            urlValue = urlValue.replace(/\{[^}]+\}/g, '1')
+        }
         
         let baseUrl: string
         if (this.props.server) {

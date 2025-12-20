@@ -71,6 +71,9 @@ export const mappingToFormValues = (mapping: IMapping): IMappingFormValues => {
     } else if (mapping.request.urlPathPattern !== undefined) {
         url = mapping.request.urlPathPattern
         urlMatchType = 'urlPathPattern'
+    } else if (mapping.request.urlPathTemplate !== undefined) {
+        url = mapping.request.urlPathTemplate
+        urlMatchType = 'urlPathTemplate'
     }
 
     const responseHeaders: IMappingResponseHeaderFormValue[] = []
@@ -231,6 +234,8 @@ export const getMappingUrl = (mapping: IMapping): string => {
         url = mapping.request.urlPath
     } else if (mapping.request.urlPathPattern !== undefined) {
         url = mapping.request.urlPathPattern
+    } else if (mapping.request.urlPathTemplate !== undefined) {
+        url = mapping.request.urlPathTemplate
     }
 
     return url

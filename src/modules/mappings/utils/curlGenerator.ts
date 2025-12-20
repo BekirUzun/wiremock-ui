@@ -130,7 +130,11 @@ const addBody = (parts: string[], method: string, bodyPatterns?: any[]): void =>
 
 export const generateCurlCommand = (mapping: IMapping, server?: IServer): string => {
     const method = mapping.request.method === 'ANY' ? 'GET' : mapping.request.method
-    const url = getMappingUrl(mapping)
+    let url = getMappingUrl(mapping)
+
+    if (mapping.request.urlPathTemplate !== undefined) {
+        url = url.replace(/\{[^}]+\}/g, '1')
+    }
 
     const serverBaseUrl = buildBaseUrl(server)
     const { baseUrl: urlBaseUrl, path } = normalizePath(url)

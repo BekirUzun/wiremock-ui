@@ -55,6 +55,7 @@ export default class RequestUrlDetails extends React.Component<IRequestUrlDetail
                     <option value="urlPattern">Path and query regex</option>
                     <option value="urlPath">Path</option>
                     <option value="urlPathPattern">Path regex</option>
+                    <option value="urlPathTemplate">Path template</option>
                     <option value="anyUrl">Any URL</option>
                 </Select>
             </React.Fragment>
