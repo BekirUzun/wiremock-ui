@@ -73,7 +73,23 @@ export const Container = styled.span<IContainerProps>`
     }};
     opacity: ${props => (props.disabled ? 0.6 : 1)};
     pointer-events: ${props => (props.disabled ? 'none' : 'auto')};
+    transition: box-shadow 200ms ease;
     &:focus {
         outline: 0;
+    }
+    &:hover {
+        box-shadow: 0 0 3px ${props => {
+            if (props.variant === 'success') {
+                return props.theme.colors.success
+            }
+            if (props.variant === 'warning') {
+                return props.theme.colors.warning
+            }
+            if (props.variant === 'danger') {
+                return props.theme.colors.danger
+            }
+    
+            return props.theme.colors.accent
+        }};
     }
 `

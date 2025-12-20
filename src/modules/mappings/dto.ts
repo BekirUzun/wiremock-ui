@@ -109,7 +109,6 @@ export const mappingToFormValues = (mapping: IMapping): IMappingFormValues => {
 }
 
 const mapResponseType = (mapping: IMapping): MappingResponseType => {
-    debugger
     if (mapping.metadata && mapping.metadata.responseType) { 
         return mapping.metadata.responseType
     }

@@ -18,7 +18,7 @@ const Container = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: ${props => props.theme.builder.block.background};
+    background: ${props => props.theme.builder.background};
 `
 
 const ButtonsWrapper = styled.div`

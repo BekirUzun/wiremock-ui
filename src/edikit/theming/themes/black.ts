@@ -127,6 +127,7 @@ const theme: ITheme = {
     form: {
         input: {
             background: '#111',
+            border: `1px solid ${colors.border}`,
             color: colors.text,
             css: css`
                 border-radius: 2px;

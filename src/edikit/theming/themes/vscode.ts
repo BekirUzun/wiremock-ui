@@ -61,8 +61,7 @@ const theme: ITheme = {
     },
     builder: {
         spacing: '12px',
-        // make the builder (left sidebar) visually distinct from the main page background
-        background: '#1f1f1f',
+        background: '#1b1b1b',
         css: css`
             border-right: 1px solid ${colors.border};
         `,
@@ -165,7 +164,6 @@ const theme: ITheme = {
     },
     form: {
         input: {
-            // give inputs a subtle shaded background so they stand out on dark themes
             background: '#35383a',
             border: `1px solid ${colors.border}`,
             color: colors.text,

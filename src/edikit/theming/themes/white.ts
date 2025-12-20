@@ -14,7 +14,7 @@ const typography: IThemeTypography = {
 }
 
 const colors: IThemeColors = {
-    background: '#f8f8f8',
+    background: '#e7eaed',
     text: '#555',
     border: '#ddd',
     accent: '#2b5fc5',
@@ -60,7 +60,7 @@ const theme: ITheme = {
     },
     builder: {
         spacing: '12px',
-        background: '#f8f8f8',
+        background: '#eeeeee',
         header: {
             background: '#7286fc',
             title: {
