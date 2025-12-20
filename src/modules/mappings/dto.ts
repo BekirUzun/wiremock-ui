@@ -85,7 +85,6 @@ export const mappingToFormValues = (mapping: IMapping): IMappingFormValues => {
             })
         })
     }
-
     return {
         id: mapping.id,
         uuid: mapping.uuid,
@@ -102,6 +101,7 @@ export const mappingToFormValues = (mapping: IMapping): IMappingFormValues => {
         responseFault: mapping.response.fault,
         responseHeaders,
         responseBody: mapping.response.body,
+        responseJsonBody: mapJsonBody(mapping),
         responseBase64Body: mapping.response.base64Body,
         responseType: mapResponseType(mapping),
         responseBodyFileName: mapping.response.bodyFileName,
@@ -109,6 +109,16 @@ export const mappingToFormValues = (mapping: IMapping): IMappingFormValues => {
         responseDelayDistribution: mapping.response.delayDistribution,
         folder: mapping.metadata ? mapping.metadata.folder : undefined,
     }
+}
+const mapJsonBody = (mapping: IMapping): string | undefined => {
+    if (mapping.response.jsonBody) {
+        try {
+            return JSON.stringify(mapping.response.jsonBody, null, 4)
+        } catch {
+            return mapping.response.body
+        }
+    }
+    return mapping.response.body
 }
 
 const mapResponseType = (mapping: IMapping): MappingResponseType => {
@@ -171,6 +181,40 @@ export const mappingRequestBodyPatternsFormValueToBodyPatterns = (bodyPatterns: 
     })
 }
 
+const getResponseBody = (formValues: IMappingFormValues): { body?: string; jsonBody?: any; base64Body?: string } => {
+    if (formValues.responseType === 'image') {
+        return { base64Body: formValues.responseBase64Body }
+    }
+    
+    if (formValues.responseType === 'json') {
+        const jsonBody = formValues.responseJsonBody ? formValues.responseJsonBody : formValues.responseBody
+        if (jsonBody) {
+            try {
+                return { jsonBody: JSON.parse(jsonBody) }
+            } catch {
+                console.error('Failed to parse response JSON body', jsonBody);
+                return { jsonBody }
+            }
+        }
+        return { jsonBody }
+    }
+    
+    return { body: formValues.responseBody }
+}
+
+const determineTransformers = (formValues: IMappingFormValues): string[] => {
+    const transformers: string[] = []
+    
+    if (formValues.responseType === 'json') {
+        const responseBody = formValues.responseJsonBody || formValues.responseBody || ''
+        if (responseBody.includes('{{')) {
+            transformers.push('response-template')
+        }
+    }
+    
+    return transformers
+}
+
 export const mappingFormValuesToMapping = (formValues: IMappingFormValues): IMapping => {
     let url: { [matchType: string]: string } = {}
     if (formValues.urlMatchType !== 'anyUrl') {
@@ -203,10 +247,7 @@ export const mappingFormValuesToMapping = (formValues: IMappingFormValues): IMap
         response: {
             status: formValues.responseStatus,
             fault: formValues.responseFault,
-            ...(formValues.responseType === 'image' 
-                ? { base64Body: formValues.responseBase64Body }
-                : { body: formValues.responseBody }
-            ),
+            ...getResponseBody(formValues),
             bodyFileName: formValues.responseBodyFileName,
             headers: formValues.responseHeaders.reduce((acc, header) => ({
                 ...acc,
@@ -214,6 +255,7 @@ export const mappingFormValuesToMapping = (formValues: IMappingFormValues): IMap
             }), {}),
             fixedDelayMilliseconds: formValues.responseDelayMilliseconds,
             delayDistribution: formValues.responseDelayDistribution,
+            transformers: determineTransformers(formValues),
         },
         metadata: {
             folder: formValues.folder !== '' ? formValues.folder : undefined,

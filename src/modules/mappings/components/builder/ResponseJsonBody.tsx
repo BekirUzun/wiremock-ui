@@ -26,7 +26,7 @@ class ResponseJsonBody extends React.Component<IResponseJsonBodyProps, IResponse
     constructor(props: IResponseJsonBodyProps) {
         super(props)
         
-        const initialValue = props.values.responseBody || ''
+        const initialValue = props.values.responseJsonBody || ''
         this.state = {
             jsonValue: this.formatJson(initialValue),
             jsonError: null,
@@ -34,8 +34,8 @@ class ResponseJsonBody extends React.Component<IResponseJsonBodyProps, IResponse
     }
 
     componentDidUpdate(prevProps: IResponseJsonBodyProps) {
-        if (this.props.values.responseBody !== prevProps.values.responseBody) {
-            const newValue = this.props.values.responseBody || ''
+        if (this.props.values.responseJsonBody !== prevProps.values.responseJsonBody) {
+            const newValue = this.props.values.responseJsonBody || ''
             if (newValue !== this.state.jsonValue) {
                 this.setState({
                     jsonValue: this.formatJson(newValue),
@@ -82,7 +82,7 @@ class ResponseJsonBody extends React.Component<IResponseJsonBodyProps, IResponse
         if (!jsonError) {
             const syntheticEvent = {
                 target: {
-                    name: 'responseBody',
+                    name: 'responseJsonBody',
                     value,
                 }
             } as React.ChangeEvent<HTMLInputElement>
@@ -109,7 +109,7 @@ class ResponseJsonBody extends React.Component<IResponseJsonBodyProps, IResponse
         } = this.props
 
         const { jsonValue, jsonError } = this.state
-        const displayError = jsonError || (errors.responseBody && touched.responseBody ? errors.responseBody : null)
+        const displayError = jsonError || (errors.responseJsonBody && touched.responseJsonBody ? errors.responseJsonBody : null)
 
         return (
             <>
@@ -123,7 +123,7 @@ class ResponseJsonBody extends React.Component<IResponseJsonBodyProps, IResponse
                         alignItems: 'center',
                     }}
                 >
-                    <label htmlFor="responseBody">
+                    <label htmlFor="responseJsonBody">
                         Body (JSON)
                     </label>
                     <Button

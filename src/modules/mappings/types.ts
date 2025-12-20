@@ -112,6 +112,7 @@ export interface IMappingResponse {
     status: number
     fault?: MappingResponseFault
     body?: string
+    jsonBody?: any
     base64Body?: string
     bodyFileName?: string
     headers?: {
@@ -121,6 +122,7 @@ export interface IMappingResponse {
     delayDistribution?:
         | IMappingResponseUniformDelayDistribution
         | IMappingResponseLogNormalDelayDistribution
+    transformers?: string[]
 }
 
 export interface IMapping {
@@ -176,6 +178,7 @@ export interface IMappingFormValues {
     responseFault?: MappingResponseFault
     responseHeaders: IMappingResponseHeaderFormValue[]
     responseBody?: string
+    responseJsonBody?: string
     responseBase64Body?: string
     responseType: MappingResponseType
     responseBodyFileName?: string
