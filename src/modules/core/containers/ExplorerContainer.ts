@@ -76,44 +76,94 @@ const mapStateToProps = (
                 children: [],
             }
 
-            const mappingsByFolder: { [folder: string]: Array<{ id: string, mapping: any }> } = {}
+            interface IFolderNode {
+                node: ITreeNode
+                children: Map<string, IFolderNode>
+                mappings: Array<{ id: string, mapping: any }>
+            }
+
+            const rootFolderNodes = new Map<string, IFolderNode>()
             const mappingsWithoutFolder: Array<{ id: string, mapping: any }> = []
 
             mappings.ids.forEach(mappingId => {
-                const mapping = mappings.byId[mappingId].mapping
-                if (mapping !== undefined) {
-                    const folder = mapping.metadata && mapping.metadata.folder
-                    if (folder) {
-                        if (!mappingsByFolder[folder]) {
-                            mappingsByFolder[folder] = []
-                        }
-                        mappingsByFolder[folder].push({ id: mappingId, mapping })
-                    } else {
-                        mappingsWithoutFolder.push({ id: mappingId, mapping })
+                const mappingState = mappings.byId[mappingId];
+                if (!mappingState || mappingState.mapping === undefined) return;
+
+                const mapping = mappingState.mapping;
+                const folder = mapping.metadata && mapping.metadata.folder;
+                if (!folder) {
+                    mappingsWithoutFolder.push({ id: mappingId, mapping });
+                    return;
+                }
+
+                const pathSegments = folder.split('/').filter(segment => segment.trim() !== '');
+                if (pathSegments.length === 0) {
+                    mappingsWithoutFolder.push({ id: mappingId, mapping });
+                    return;
+                }
+
+                let currentMap = rootFolderNodes;
+                let currentPath = '';
+
+                pathSegments.forEach((segment, index) => {
+                    const isLeaf = index === pathSegments.length - 1;
+                    currentPath = currentPath ? `${currentPath}/${segment}` : segment;
+
+                    if (!currentMap.has(segment)) {
+                        const folderNode: ITreeNode = {
+                            id: `${server.name}.mappings.folder.${currentPath}`,
+                            type: 'folder',
+                            label: segment,
+                            data: {
+                                serverName: server.name,
+                                folder: currentPath,
+                            },
+                            children: [],
+                        };
+                        currentMap.set(segment, {
+                            node: folderNode,
+                            children: new Map(),
+                            mappings: [],
+                        });
                     }
-                }
-            })
 
-            Object.keys(mappingsByFolder).sort().forEach(folder => {
-                const folderNode: ITreeNode = {
-                    id: `${server.name}.mappings.folder.${folder}`,
-                    type: 'folder',
-                    label: folder,
-                    data: {
-                        serverName: server.name,
-                        folder,
-                    },
-                    children: [],
-                }
-                mappingsByFolder[folder].forEach(({ id: mappingId, mapping }) => {
-                    folderNode.children!.push(
-                        createMappingNode(mappingId, mapping, server.name, currentContentIds)
-                    )
-                })
-                mappingsNode.children!.push(folderNode)
-            })
+                    const folderNodeData = currentMap.get(segment)!;
+                    if (isLeaf) {
+                        folderNodeData.mappings.push({ id: mappingId, mapping });
+                    }
+                    currentMap = folderNodeData.children;
+                });
+            });
 
-            // Add mappings without folders
+            const buildFolderTree = (folderNodes: Map<string, IFolderNode>): ITreeNode[] => {
+                const result: ITreeNode[] = [];
+                const sortedKeys = Array.from(folderNodes.keys()).sort();
+
+                sortedKeys.forEach(key => {
+                    const folderNodeData = folderNodes.get(key)!;
+                    const folderNode = folderNodeData.node;
+
+                    if (folderNodeData.children.size > 0) {
+                        folderNode.children = buildFolderTree(folderNodeData.children);
+                    }
+
+                    folderNodeData.mappings.forEach(({ id: mappingId, mapping }) => {
+                        if (!folderNode.children) {
+                            folderNode.children = [];
+                        }
+                        folderNode.children.push(
+                            createMappingNode(mappingId, mapping, server.name, currentContentIds)
+                        );
+                    });
+
+                    result.push(folderNode);
+                });
+
+                return result;
+            }
+
+            mappingsNode.children!.push(...buildFolderTree(rootFolderNodes))
+
             mappingsWithoutFolder.forEach(({ id: mappingId, mapping }) => {
                 mappingsNode.children!.push(
                     createMappingNode(mappingId, mapping, server.name, currentContentIds)
@@ -151,12 +201,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
         if (!serverMappings) return
 
         const mappingState = serverMappings.byId[mappingId]
-        if (!mappingState || !mappingState.mapping) {
-            // If mapping is not loaded, fetch it first
-            // For now, we'll just return - in a real scenario, we might want to show an error
-            // or fetch the mapping and then clone it
-            return
-        }
+        if (!mappingState || !mappingState.mapping) return
 
         const mapping = mappingState.mapping
         const creationId = uuid()
