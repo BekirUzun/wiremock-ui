@@ -18,6 +18,15 @@ interface IResponseBaseProps {
 }
 
 export default class ResponseBase extends React.Component<IResponseBaseProps> {
+    private static readonly COMMON_HEADERS = [
+        'Content-Type', 'Content-Length', 'Content-Disposition', 'Content-Encoding',
+        'Cache-Control', 'Expires', 'Last-Modified', 'ETag', 'Location', 'Set-Cookie',
+        'Authorization', 'Accept', 'Accept-Encoding', 'Accept-Language', 'User-Agent',
+        'X-Requested-With', 'X-Forwarded-For', 'X-Forwarded-Proto', 'Access-Control-Allow-Origin',
+        'Access-Control-Allow-Methods', 'Access-Control-Allow-Headers', 'Access-Control-Expose-Headers',
+        'Access-Control-Max-Age', 'Access-Control-Allow-Credentials',
+    ]
+
     getContentTypeForResponseType = (responseType: MappingResponseType): string => {
         switch (responseType) {
 
@@ -41,7 +50,7 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
         const { onChange, values } = this.props
         const newResponseType = e.target.value as MappingResponseType
         onChange(e)
-        
+
         const contentType = this.getContentTypeForResponseType(newResponseType)
         if (!contentType) {
             return
@@ -50,7 +59,7 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
         const contentTypeIndex = values.responseHeaders.findIndex(
             header => header.key.toLowerCase() === 'content-type'
         )
-        
+
         if (contentTypeIndex >= 0) {
             const updatedHeaders = [...values.responseHeaders]
             updatedHeaders[contentTypeIndex] = {
@@ -131,9 +140,14 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                                 </div>
                             )}
 
+                            <datalist id="common-headers">
+                                {ResponseBase.COMMON_HEADERS.map(header => (
+                                    <option key={header} value={header} />
+                                ))}
+                            </datalist>
                             <Button
                                 variant="primary"
-                                icon={<PlusCircle size={14}/>}
+                                icon={<PlusCircle size={14} />}
                                 iconPlacement="append"
                                 style={{
                                     height: '30px',
@@ -155,6 +169,7 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                                         onChange={onChange}
                                         onBlur={onBlur}
                                         placeholder="header name"
+                                        list="common-headers"
                                         style={{
                                             gridColumnStart: 1,
                                             gridColumnEnd: 4,
@@ -178,7 +193,7 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                                                 sync()
                                             }}
                                             variant="danger"
-                                            icon={<Trash2 size={16}/>}
+                                            icon={<Trash2 size={16} />}
                                             style={{
                                                 height: '30px',
                                             }}
