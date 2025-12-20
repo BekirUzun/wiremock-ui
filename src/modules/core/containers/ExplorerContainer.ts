@@ -8,6 +8,22 @@ import { IMappingsState } from '../../mappings/store'
 import { IServer } from '../../servers'
 import Explorer from '../components/Explorer'
 
+const createMappingNode = (
+    mappingId: string,
+    mapping: any,
+    serverName: string,
+    currentContentIds: string[]
+): ITreeNode => ({
+    id: mappingId,
+    type: 'mapping',
+    label: mapping.name || getMappingUrl(mapping),
+    isCurrent: currentContentIds.includes(mappingId),
+    data: {
+        serverName,
+        mappingId,
+    },
+})
+
 const mapStateToProps = (
     {
         panes,
@@ -90,32 +106,18 @@ const mapStateToProps = (
                     children: [],
                 }
                 mappingsByFolder[folder].forEach(({ id: mappingId, mapping }) => {
-                    folderNode.children!.push({
-                        id: mappingId,
-                        type: 'mapping',
-                        label: mapping.name || `${mapping.request.method} ${getMappingUrl(mapping)}`,
-                        isCurrent: currentContentIds.includes(mappingId),
-                        data: {
-                            serverName: server.name,
-                            mappingId,
-                        },
-                    })
+                    folderNode.children!.push(
+                        createMappingNode(mappingId, mapping, server.name, currentContentIds)
+                    )
                 })
                 mappingsNode.children!.push(folderNode)
             })
 
             // Add mappings without folders
             mappingsWithoutFolder.forEach(({ id: mappingId, mapping }) => {
-                mappingsNode.children!.push({
-                    id: mappingId,
-                    type: 'mapping',
-                    label: mapping.name || `${mapping.request.method} ${getMappingUrl(mapping)}`,
-                    isCurrent: currentContentIds.includes(mappingId),
-                    data: {
-                        serverName: server.name,
-                        mappingId,
-                    },
-                })
+                mappingsNode.children!.push(
+                    createMappingNode(mappingId, mapping, server.name, currentContentIds)
+                )
             })
 
             serverNode.children.push(mappingsNode)
