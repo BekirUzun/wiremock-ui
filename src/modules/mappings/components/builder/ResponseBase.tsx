@@ -6,6 +6,7 @@ import { IMappingFormValues, MappingResponseType } from '../../types'
 import ResponseTextBody from './ResponseTextBody'
 import ResponseImageBody from './ResponseImageBody'
 import ResponseJsonBody from './ResponseJsonBody'
+import ResponseHtmlBody from './ResponseHtmlBody'
 
 interface IResponseBaseProps {
     values: IMappingFormValues
@@ -19,16 +20,18 @@ interface IResponseBaseProps {
 export default class ResponseBase extends React.Component<IResponseBaseProps> {
     getContentTypeForResponseType = (responseType: MappingResponseType): string => {
         switch (responseType) {
-            case 'text':
-                return 'text/plain'
+
             case 'json':
                 return 'application/json'
+            case 'html':
+                return 'text/html; charset=utf-8'
             case 'image':
                 return 'image/png'
             case 'video':
                 return 'video/mp4'
             case 'file':
                 return 'application/octet-stream'
+            case 'text':
             default:
                 return ''
         }
@@ -119,6 +122,7 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
                             >
                                 <option value="text">Text</option>
                                 <option value="json">JSON</option>
+                                <option value="html">HTML</option>
                                 <option value="image">Image</option>
                             </Select>
                             {errors.responseStatus && touched.responseStatus && (
@@ -216,6 +220,17 @@ export default class ResponseBase extends React.Component<IResponseBaseProps> {
 
                             {values.responseType === 'json' && (
                                 <ResponseJsonBody
+                                    values={values}
+                                    errors={errors}
+                                    touched={touched}
+                                    onChange={onChange}
+                                    onBlur={onBlur}
+                                    sync={sync}
+                                />
+                            )}
+
+                            {values.responseType === 'html' && (
+                                <ResponseHtmlBody
                                     values={values}
                                     errors={errors}
                                     touched={touched}

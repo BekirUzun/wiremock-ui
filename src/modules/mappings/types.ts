@@ -29,6 +29,7 @@ export type MappingResponseType =
     | 'json'
     | 'image'
     | 'text'
+    | 'html'
     | 'video'
     | 'file'
 
